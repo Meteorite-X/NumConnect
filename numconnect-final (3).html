@@ -1,0 +1,3110 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NumConnect</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   TOKENS  (unchanged from v2 you liked)
+═══════════════════════════════════════ */
+:root{
+  --coral:#FF5C5C;--coral2:#FF8A65;--peach:#FFF0EB;
+  --mint:#00C9A7;--mint-bg:#EDFAF7;
+  --sky:#4A9EFF;--sky-bg:#EBF4FF;
+  --gold:#FFB800;--gold-bg:#FFF8E1;
+  --ink:#1A1A2E;--ink2:#3D3D56;--muted:#8888A4;
+  --line:#EBEBF5;--surface:#F7F7FC;--white:#FFFFFF;
+  --sh:0 2px 24px rgba(26,26,46,.07);
+  --sh2:0 8px 40px rgba(26,26,46,.12);
+  --r:14px;--rm:20px;--rl:28px;--rxl:36px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--surface);color:var(--ink);-webkit-font-smoothing:antialiased}
+button,select,input,textarea{font-family:inherit;outline:none}
+
+/* ── DEV NAV ─────────────────────────── */
+.nav-bar{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);display:flex;gap:4px;padding:10px 20px;overflow-x:auto;scrollbar-width:none}
+.nav-bar::-webkit-scrollbar{display:none}
+.nt{padding:7px 15px;border-radius:50px;font-size:12px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;transition:.2s;background:transparent;color:var(--muted)}
+.nt.on{background:var(--ink);color:#fff}
+.nt:hover:not(.on){background:var(--line);color:var(--ink)}
+
+/* ── SCREENS ─────────────────────────── */
+.sc{display:none;animation:fadeUp .3s ease both}
+.sc.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════════
+   SHARED PIECES
+═══════════════════════════════════════ */
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:14px 28px;border-radius:50px;background:var(--coral);color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;transition:.2s;box-shadow:0 6px 22px rgba(255,92,92,.3);font-family:inherit}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(255,92,92,.4)}
+.btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:13px 26px;border-radius:50px;background:transparent;color:var(--ink2);font-size:15px;font-weight:700;border:1.5px solid var(--line);cursor:pointer;transition:.2s;font-family:inherit}
+.btn-ghost:hover{border-color:var(--coral);color:var(--coral)}
+.btn-full{width:100%}
+
+/* ═══════════════════════════════════════
+   01 · LANDING  (kept as-is, just token)
+═══════════════════════════════════════ */
+.land{min-height:100vh;background:var(--white);overflow:hidden;position:relative}
+.land-blob{position:absolute;top:-120px;left:-100px;right:-100px;height:520px;background:linear-gradient(135deg,#FFEDE8 0%,#FFD6CC 40%,#E8F4FF 100%);border-radius:0 0 60% 60%/0 0 30% 30%;z-index:0}
+.land-nav{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;padding:24px 40px}
+.land-logo{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:10px}
+.logo-pill{background:var(--coral);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 9px;border-radius:50px}
+.land-nav-links{display:flex;gap:28px;align-items:center}
+.land-link{font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;transition:.2s}
+.land-link:hover{color:var(--coral)}
+.btn-nav{padding:10px 22px;border-radius:50px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;transition:.2s;font-family:inherit}
+.btn-nav:hover{background:var(--coral)}
+.land-hero{position:relative;z-index:1;text-align:center;padding:60px 24px 0}
+.land-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--coral);margin-bottom:28px}
+.eyebrow-dot{width:7px;height:7px;background:var(--coral);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.land-h1{font-family:'Fraunces',serif;font-size:clamp(42px,6vw,80px);font-weight:700;line-height:1.05;letter-spacing:-1px;margin-bottom:20px;color:var(--ink)}
+.land-h1 em{font-style:italic;color:var(--coral)}
+.land-p{font-size:clamp(15px,1.8vw,18px);color:var(--ink2);max-width:500px;margin:0 auto 40px;line-height:1.75;font-weight:300}
+.land-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
+.btn-cta{padding:16px 36px;border-radius:50px;font-size:15px;font-weight:800;border:none;cursor:pointer;transition:.25s;font-family:inherit}
+.btn-cta-fill{background:var(--coral);color:#fff;box-shadow:0 8px 28px rgba(255,92,92,.32)}
+.btn-cta-fill:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(255,92,92,.42)}
+.btn-cta-out{background:var(--white);color:var(--ink);border:2px solid var(--line)}
+.btn-cta-out:hover{border-color:var(--coral);color:var(--coral)}
+/* phone mockups */
+.phone-wrap{display:flex;justify-content:center;gap:-30px;height:340px;margin-bottom:40px;position:relative}
+.phone{width:200px;height:340px;background:var(--white);border-radius:32px;border:2px solid rgba(0,0,0,.08);box-shadow:0 20px 60px rgba(0,0,0,.12);overflow:hidden;position:absolute;display:flex;flex-direction:column}
+.phone1{left:calc(50% - 220px);transform:rotate(-6deg);top:20px;z-index:1}
+.phone2{left:calc(50% - 100px);z-index:3;top:0}
+.phone3{left:calc(50% + 20px);transform:rotate(6deg);top:20px;z-index:1}
+.ph-top{height:8px;background:var(--line);margin:14px 60px 0;border-radius:4px}
+.ph-card{flex:1;margin:10px;border-radius:22px;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;position:relative;overflow:hidden}
+.ph-card-1{background:linear-gradient(160deg,#FFCDD2,#FF8A65)}
+.ph-card-2{background:linear-gradient(160deg,#B3E5FC,#4A9EFF)}
+.ph-card-3{background:linear-gradient(160deg,#C8E6C9,#00C9A7)}
+.ph-emo{font-size:60px;text-align:center;position:absolute;top:16px;left:50%;transform:translateX(-50%)}
+.ph-name{font-weight:800;font-size:15px;color:#fff}
+.ph-sub{font-size:11px;color:rgba(255,255,255,.8);margin-top:2px}
+.ph-match{display:inline-block;background:rgba(255,255,255,.25);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:50px;margin-top:8px}
+.phone.center{transform:translateY(-16px);z-index:2;width:200px;height:360px}
+.phone.side{opacity:.7}
+/* stats */
+.stats-strip{display:flex;justify-content:center;gap:0;border-top:1px solid var(--line);background:var(--white)}
+.stat-item{flex:1;max-width:200px;text-align:center;padding:28px 20px;border-right:1px solid var(--line)}
+.stat-item:last-child{border-right:none}
+.stat-n{font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:var(--coral);display:block;margin-bottom:4px}
+.stat-l{font-size:13px;color:var(--muted);font-weight:500}
+/* features */
+.feat-section{padding:64px 40px;background:var(--surface)}
+.feat-title{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:700;text-align:center;margin-bottom:8px}
+.feat-sub{text-align:center;color:var(--muted);font-size:15px;margin-bottom:44px}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:960px;margin:0 auto}
+.feat-card{background:var(--white);border-radius:var(--rl);padding:32px 28px;border:1.5px solid var(--line);transition:.3s;cursor:default}
+.feat-card:hover{transform:translateY(-6px);box-shadow:var(--sh2);border-color:transparent}
+.feat-ico{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px}
+.fi-a{background:var(--peach)}.fi-b{background:var(--mint-bg)}.fi-c{background:var(--sky-bg)}
+.feat-card-t{font-size:17px;font-weight:800;margin-bottom:10px;color:var(--ink)}
+.feat-card-p{font-size:14px;color:var(--muted);line-height:1.7}
+
+/* ═══════════════════════════════════════
+   02 · LOGIN  (unchanged)
+═══════════════════════════════════════ */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--surface);padding:24px}
+.login-card{background:var(--white);border-radius:var(--rxl);box-shadow:var(--sh2);width:100%;max-width:420px;overflow:hidden}
+.login-top{background:linear-gradient(135deg,#FFEDE8,#FFD6CC 60%,#E8F4FF);padding:40px 36px 36px;text-align:center}
+.login-logo{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:10px}
+.login-tagline{font-size:14px;color:var(--ink2);font-weight:500}
+.login-body{padding:32px 36px}
+.lbl{display:block;font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:.4px;margin-bottom:8px}
+.inp{width:100%;border:1.5px solid var(--line);border-radius:var(--r);padding:14px 18px;font-size:14px;color:var(--ink);background:var(--surface);transition:.2s;outline:none;font-family:inherit}
+.inp:focus{border-color:var(--coral);background:var(--white);box-shadow:0 0 0 4px rgba(255,92,92,.1)}
+.inp::placeholder{color:var(--muted)}
+.hint{font-size:11px;color:var(--muted);margin-top:6px}
+.btn-main{width:100%;padding:16px;border-radius:var(--r);background:var(--coral);color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;transition:.25s;margin-top:6px;box-shadow:0 6px 20px rgba(255,92,92,.28);font-family:inherit}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(255,92,92,.38)}
+.or-row{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:12px;font-weight:600}
+.or-row::before,.or-row::after{content:'';flex:1;height:1px;background:var(--line)}
+.btn-oauth{width:100%;padding:14px;border-radius:var(--r);background:var(--white);color:var(--ink);font-size:14px;font-weight:700;border:1.5px solid var(--line);cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-oauth:hover{background:var(--peach);border-color:var(--coral)}
+.login-footer{text-align:center;padding:0 36px 28px;font-size:12px;color:var(--muted)}
+
+/* ═══════════════════════════════════════
+   03 · OTP  (unchanged)
+═══════════════════════════════════════ */
+.otp-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--surface);padding:24px}
+.otp-card{background:var(--white);border-radius:var(--rxl);box-shadow:var(--sh2);width:100%;max-width:400px;padding:44px 36px;text-align:center}
+.otp-icon{font-size:56px;margin-bottom:20px;animation:wob 2s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.otp-title{font-family:'Fraunces',serif;font-size:26px;font-weight:700;margin-bottom:8px}
+.otp-sub{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+.otp-sub strong{color:var(--ink);font-weight:700}
+.otp-inputs{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
+.otp-inp{width:52px;height:60px;border-radius:14px;border:2px solid var(--line);background:var(--surface);text-align:center;font-size:24px;font-weight:800;color:var(--ink);transition:.2s;outline:none}
+.otp-inp:focus{border-color:var(--coral);background:var(--white);box-shadow:0 0 0 4px rgba(255,92,92,.1)}
+.otp-inp.filled{border-color:var(--coral);background:var(--peach);color:var(--coral)}
+.otp-timer{font-size:12px;color:var(--muted);margin-bottom:24px}
+.otp-timer span{color:var(--coral);font-weight:700}
+.otp-resend{color:var(--coral);font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline}
+
+/* ═══════════════════════════════════════
+   04 · PROFILE SETUP  ★ REBUILT
+═══════════════════════════════════════ */
+.setup-wrap{
+  max-width:680px; margin:0 auto; padding:0;
+  min-height:100vh; background:var(--white);
+}
+
+/* sticky step bar */
+.step-bar{
+  position:sticky; top:0; /* sits under dev-nav which is 44px */
+  background:rgba(255,255,255,.97); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:16px 28px; z-index:50;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.step-dots{display:flex;gap:8px;align-items:center}
+.sd{width:32px;height:4px;border-radius:2px;background:var(--line);transition:.35s}
+.sd.done{background:var(--coral)}
+.sd.active{background:var(--coral);width:48px}
+.step-label{font-size:12px;font-weight:700;color:var(--muted)}
+.step-label strong{color:var(--coral)}
+
+/* step header inside content */
+.step-content{padding:32px 28px 100px}
+.step-head-h{font-family:'Fraunces',serif;font-size:26px;font-weight:700;margin-bottom:6px}
+.step-head-p{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+
+/* ── Photo upload  ── */
+.photo-upload-area{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto;gap:10px;margin-bottom:28px}
+
+/* main photo slot — tall, left column spans 2 rows */
+.ph-main{
+  grid-row:1/3;
+  background:linear-gradient(160deg,var(--peach),#FFE0D8);
+  border:2px dashed var(--coral);border-radius:var(--rl);
+  min-height:280px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;
+  transition:.2s;position:relative;overflow:hidden;
+}
+.ph-main:hover{border-style:solid;box-shadow:0 4px 20px rgba(255,92,92,.12)}
+.ph-main-emo{font-size:72px;opacity:.25;margin-bottom:12px}
+.ph-main-plus{font-size:36px;color:var(--coral);line-height:1;margin-bottom:6px}
+.ph-main-lbl{font-size:13px;font-weight:700;color:var(--coral)}
+.ph-main-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.ph-main-badge{position:absolute;bottom:12px;left:12px;background:var(--coral);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:50px;letter-spacing:.5px}
+
+/* secondary slots */
+.ph-sec{
+  background:var(--surface);border:1.5px dashed var(--line);
+  border-radius:var(--rm);min-height:128px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;position:relative;
+}
+.ph-sec:hover{border-color:var(--coral);background:var(--peach)}
+.ph-sec-plus{font-size:22px;color:var(--muted);margin-bottom:4px}
+.ph-sec-lbl{font-size:11px;color:var(--muted)}
+
+/* ── Form fields ── */
+.fg{margin-bottom:20px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* year pills — bigger touch targets */
+.year-row{display:flex;gap:8px;flex-wrap:wrap}
+.yr-pill{
+  flex:1;min-width:52px;
+  padding:12px 8px;border-radius:var(--r);
+  border:1.5px solid var(--line);background:var(--surface);
+  font-size:14px;font-weight:700;color:var(--muted);
+  cursor:pointer;transition:.18s;text-align:center;
+}
+.yr-pill.on{border-color:var(--coral);background:var(--peach);color:var(--coral)}
+.yr-pill:hover:not(.on){border-color:var(--coral);color:var(--coral)}
+
+/* tags */
+.tag-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tag{padding:9px 16px;border-radius:50px;font-size:13px;font-weight:600;border:1.5px solid var(--line);background:var(--white);color:var(--ink2);cursor:pointer;transition:.18s}
+.tag.on{border-color:var(--coral);background:var(--peach);color:var(--coral)}
+.tag:hover:not(.on){border-color:var(--coral);color:var(--coral)}
+.goal-tag.on{border-color:var(--mint);background:var(--mint-bg);color:#009E83}
+
+/* SNS links */
+.sns-row{display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.sns-lbl{font-size:13px;color:var(--muted);font-weight:600;text-align:right}
+
+/* fixed footer CTA */
+.setup-footer{
+  position:sticky;bottom:0;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  padding:16px 28px;
+  display:flex;gap:12px;align-items:center;
+}
+.setup-footer .back-btn{
+  padding:14px 20px;border-radius:50px;border:1.5px solid var(--line);
+  background:transparent;color:var(--muted);font-size:14px;font-weight:700;
+  cursor:pointer;transition:.2s;font-family:inherit;flex-shrink:0;
+}
+.setup-footer .back-btn:hover{border-color:var(--ink);color:var(--ink)}
+.setup-footer .next-btn{
+  flex:1;padding:15px;border-radius:50px;background:var(--coral);color:#fff;
+  font-size:15px;font-weight:800;border:none;cursor:pointer;transition:.25s;
+  box-shadow:0 6px 20px rgba(255,92,92,.28);font-family:inherit;
+}
+.setup-footer .next-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(255,92,92,.38)}
+
+/* ═══════════════════════════════════════
+   05 · DISCOVER  ★ REBUILT + LIST VIEW
+═══════════════════════════════════════ */
+.app-shell{display:grid;grid-template-columns:72px 1fr 300px;min-height:100vh;background:var(--surface)}
+
+/* Icon sidebar (same as before) */
+.icon-nav{background:var(--white);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:4px;position:sticky;top:44px;height:calc(100vh - 44px)}
+.nav-logo-sm{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--coral);margin-bottom:24px}
+.n-ico{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:.2s;position:relative;color:var(--muted)}
+.n-ico:hover{background:var(--surface);color:var(--ink)}
+.n-ico.on{background:var(--peach);color:var(--coral)}
+.n-badge{position:absolute;top:6px;right:6px;width:16px;height:16px;background:var(--coral);border-radius:50%;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid var(--white)}
+.n-sep{width:32px;height:1px;background:var(--line);margin:8px 0}
+.nav-avatar-sm{margin-top:auto;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--coral2));display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid var(--line);cursor:pointer}
+
+/* Feed main */
+.feed-main{padding:24px 28px;overflow-y:auto}
+
+/* Feed topbar */
+.feed-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.feed-h{font-family:'Fraunces',serif;font-size:24px;font-weight:700}
+.feed-h span{color:var(--coral)}
+.feed-top-right{display:flex;align-items:center;gap:10px}
+.like-pill{display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--line);border-radius:50px;padding:7px 14px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.like-track{height:5px;width:60px;background:var(--line);border-radius:3px;overflow:hidden}
+.like-inner{height:100%;width:70%;background:linear-gradient(90deg,var(--coral),var(--coral2));border-radius:3px}
+.upgrade-pill{padding:6px 14px;border-radius:50px;background:var(--gold-bg);border:1.5px solid #FFE082;color:#A07800;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
+
+/* View toggle */
+.view-toggle{display:flex;background:var(--surface);border:1.5px solid var(--line);border-radius:50px;overflow:hidden;gap:0}
+.vt-btn{padding:7px 16px;font-size:12px;font-weight:700;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:.2s;font-family:inherit}
+.vt-btn.on{background:var(--ink);color:#fff}
+
+/* Filter bar — horizontal scroll, no wrap */
+.filter-scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:20px;padding-bottom:2px}
+.filter-scroll::-webkit-scrollbar{display:none}
+.f-chip{padding:8px 16px;border-radius:50px;font-size:12px;font-weight:700;border:1.5px solid var(--line);background:var(--white);color:var(--muted);cursor:pointer;transition:.2s;white-space:nowrap;flex-shrink:0}
+.f-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.f-chip:hover:not(.on){border-color:var(--coral);color:var(--coral)}
+
+/* ── SWIPE VIEW ── */
+.swipe-view{display:flex;justify-content:center;padding-bottom:20px}
+
+/* Stack wrapper — no fixed height, cards are stacked with margin trick */
+.card-stack{
+  position:relative;
+  width:380px;
+  /* push down so bg cards peek above */
+  padding-top:14px;
+}
+
+/* Background ghost cards */
+.sw-back1,.sw-back2{
+  position:absolute;
+  left:0;right:0;
+  top:0;
+  border-radius:var(--rxl);
+  border:1.5px solid var(--line);
+  pointer-events:none;
+  /* same height as front card content — photo 360 + info ~110 */
+  height:470px;
+}
+.sw-back1{
+  background:var(--peach);
+  transform:rotate(-3deg) scale(.96);
+  z-index:1;
+}
+.sw-back2{
+  background:#FFF5F5;
+  transform:rotate(1.5deg) scale(.985);
+  z-index:2;
+}
+
+/* Front card — normal flow, no absolute */
+.sw-front{
+  position:relative;z-index:3;
+  background:var(--white);
+  border-radius:var(--rxl);
+  box-shadow:var(--sh2);
+  overflow:visible; /* never clip buttons */
+  border:1.5px solid var(--line);
+}
+
+.sw-photo{
+  height:360px;
+  background:linear-gradient(160deg,#FFE0D8,#FFB6A3);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  border-radius:var(--rxl) var(--rxl) 0 0;
+  overflow:hidden;
+}
+.sw-emo{font-size:120px}
+.sw-badge{
+  position:absolute;top:14px;right:14px;
+  background:var(--white);border-radius:50px;
+  padding:8px 16px;font-size:14px;font-weight:800;
+  color:var(--coral);box-shadow:0 4px 16px rgba(0,0,0,.12);
+  display:flex;align-items:center;gap:6px;
+}
+.sw-online-badge{
+  position:absolute;top:14px;left:14px;
+  background:#00C17C;border-radius:50px;
+  padding:6px 14px;font-size:12px;font-weight:700;color:#fff;
+}
+.sw-info{padding:20px 24px 16px}
+.sw-name{
+  font-family:'Fraunces',serif;font-size:24px;font-weight:700;
+  margin-bottom:5px;display:flex;align-items:center;gap:10px;
+}
+.sw-rating{font-size:12px;font-weight:700;background:var(--gold-bg);color:var(--gold);padding:3px 10px;border-radius:50px}
+.sw-meta{font-size:14px;color:var(--muted);margin-bottom:14px;font-weight:500}
+.sw-tags{display:flex;gap:7px;flex-wrap:wrap}
+.sw-tag{padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;background:var(--surface);color:var(--ink2)}
+
+/* ── Action buttons — OUTSIDE card overflow, always visible ── */
+.sw-actions{
+  display:flex;justify-content:center;align-items:center;
+  gap:16px;
+  padding:20px 0 8px;
+  background:transparent;
+}
+.sa{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;transition:.2s;background:none;border:none;font-family:inherit;
+}
+.sa:hover{transform:scale(1.1)}
+.sa-c{
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 18px rgba(0,0,0,.1);
+}
+.sa-pass .sa-c{width:60px;height:60px;background:var(--white);border:2px solid var(--line);font-size:24px;color:var(--muted)}
+.sa-pass:hover .sa-c{border-color:#FF3B30;color:#FF3B30;background:#FFF0EF}
+.sa-super .sa-c{width:52px;height:52px;background:var(--sky-bg);border:2px solid #B3D7FF;font-size:20px}
+.sa-like .sa-c{
+  width:76px;height:76px;background:var(--coral);font-size:32px;
+  box-shadow:0 10px 32px rgba(255,92,92,.4);
+}
+.sa-like:hover .sa-c{box-shadow:0 14px 40px rgba(255,92,92,.55);background:#e64040}
+.sa-boost .sa-c{width:52px;height:52px;background:var(--gold-bg);border:2px solid #FFE082;font-size:20px}
+.sa-lbl{font-size:11px;font-weight:700;color:var(--muted)}
+
+/* ── LIST VIEW ── */
+.list-view{display:none;flex-direction:column;gap:0}
+.list-view.active{display:flex}
+
+.user-card{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 0;
+  border-bottom:1px solid var(--line);
+  cursor:pointer;transition:.15s;
+}
+.user-card:hover{background:var(--peach);margin:0 -10px;padding:16px 10px;border-radius:var(--rm)}
+.user-av{
+  width:58px;height:58px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  position:relative;
+}
+.uav-online{position:absolute;bottom:1px;right:1px;width:12px;height:12px;background:#00C17C;border-radius:50%;border:2px solid var(--white)}
+.user-info{flex:1;min-width:0}
+.user-name-row{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.uname{font-size:15px;font-weight:700;color:var(--ink)}
+.u-rating{font-size:11px;background:var(--gold-bg);color:var(--gold);padding:2px 8px;border-radius:50px;font-weight:700}
+.u-meta{font-size:12px;color:var(--muted);margin-bottom:7px}
+.u-tags{display:flex;gap:5px;flex-wrap:wrap}
+.u-tag{padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600;background:var(--surface);color:var(--ink2);border:1px solid var(--line)}
+.user-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0}
+.score-ring{width:52px;height:52px;border-radius:50%;border:2.5px solid var(--coral);background:var(--peach);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.sr-n{font-size:14px;font-weight:800;color:var(--coral);line-height:1}
+.sr-l{font-size:9px;color:var(--coral);font-weight:600}
+.msg-btn{padding:7px 16px;border-radius:50px;background:var(--coral);color:#fff;font-size:12px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;font-family:inherit;transition:.2s;box-shadow:0 3px 10px rgba(255,92,92,.25)}
+.msg-btn:hover{background:#e64040}
+.msg-btn.sent{background:var(--mint-bg);color:var(--mint);border:1px solid rgba(0,201,167,.3);box-shadow:none}
+
+/* Right panel (same) */
+.right-col{background:var(--white);border-left:1px solid var(--line);padding:24px 20px;overflow-y:auto;position:sticky;top:44px;height:calc(100vh - 44px)}
+.rp-title{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px}
+.mini-sched{background:var(--surface);border-radius:var(--rm);padding:14px;margin-bottom:12px}
+.ms-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px}
+.ms-d{font-size:9px;text-align:center;font-weight:700;color:var(--muted)}
+.ms-slots{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.ms-col{display:flex;flex-direction:column;gap:3px}
+.ms-slot{height:9px;border-radius:2px;background:var(--line)}
+.ms-slot.f{background:rgba(255,92,92,.4)}
+.ms-slot.b{background:rgba(74,158,255,.3)}
+.ms-edit{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer;margin-top:10px;transition:.2s;font-family:inherit}
+.ms-edit:hover{border-color:var(--coral);color:var(--coral)}
+.match-list{display:flex;flex-direction:column;gap:4px}
+.mi{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r);cursor:pointer;transition:.2s}
+.mi:hover{background:var(--surface)}
+.mi-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--coral2));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative}
+.mi-dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:#00C17C;border-radius:50%;border:2px solid var(--white)}
+.mi-name{font-size:13px;font-weight:700;color:var(--ink)}
+.mi-pre{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.mi-time{font-size:10px;color:var(--muted);margin-left:auto;flex-shrink:0}
+.mi-unread{width:18px;height:18px;background:var(--coral);border-radius:50%;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;margin-left:auto;flex-shrink:0}
+
+/* Match modal */
+.modal-ov{display:none;position:fixed;inset:0;z-index:999;background:rgba(255,237,232,.92);backdrop-filter:blur(24px);align-items:center;justify-content:center;animation:fadein .3s ease}
+.modal-ov.show{display:flex}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.match-modal{background:var(--white);border-radius:40px;box-shadow:0 40px 100px rgba(255,92,92,.2);padding:52px 44px;text-align:center;max-width:400px;width:90%;animation:popin .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popin{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.mm-sparkle{font-size:60px;margin-bottom:16px;animation:spin 2s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.mm-title{font-family:'Fraunces',serif;font-size:44px;font-weight:700;color:var(--coral);letter-spacing:-1px;margin-bottom:8px}
+.mm-sub{font-size:15px;color:var(--muted);margin-bottom:32px}
+.mm-avs{display:flex;justify-content:center;align-items:center;margin-bottom:36px}
+.mm-av{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--coral2));display:flex;align-items:center;justify-content:center;font-size:30px;border:3px solid var(--white);box-shadow:0 6px 20px rgba(255,92,92,.25)}
+.mm-av:last-child{margin-left:-14px}
+.mm-heart{width:32px;height:32px;background:var(--coral);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;z-index:1;margin:0 -4px;box-shadow:0 4px 14px rgba(255,92,92,.4),0 0 0 3px var(--white)}
+.mm-btns{display:flex;flex-direction:column;gap:10px}
+.mm-btn-chat{padding:16px;border-radius:50px;background:var(--coral);color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(255,92,92,.32);transition:.2s;font-family:inherit}
+.mm-btn-chat:hover{transform:translateY(-1px)}
+.mm-btn-later{padding:14px;border-radius:50px;background:transparent;color:var(--muted);font-size:14px;font-weight:700;border:2px solid var(--line);cursor:pointer;transition:.2s;font-family:inherit}
+.mm-btn-later:hover{border-color:var(--coral);color:var(--coral)}
+
+/* ═══════════════════════════════════════
+   06 · SCHEDULE  ★ DRAG-SELECT REBUILT
+═══════════════════════════════════════ */
+.sched-page{max-width:900px;margin:0 auto;padding:28px 24px 60px}
+
+/* mode toggle */
+.sched-mode{display:flex;gap:0;background:var(--surface);border:1.5px solid var(--line);border-radius:50px;overflow:hidden;width:fit-content}
+.sm-btn{padding:8px 20px;font-size:13px;font-weight:700;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:.2s;font-family:inherit}
+.sm-btn.on{background:var(--ink);color:#fff;border-radius:50px}
+
+.sched-topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.sched-h{font-family:'Fraunces',serif;font-size:24px;font-weight:700;margin-bottom:4px}
+.sched-sub{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* instruction strip */
+.sched-hint{
+  display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+  background:var(--peach);border:1.5px solid rgba(255,92,92,.2);
+  border-radius:var(--r);padding:12px 18px;margin-bottom:16px;
+}
+.sh-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink2)}
+.sh-swatch{width:18px;height:18px;border-radius:5px;flex-shrink:0}
+.sh-free{background:rgba(255,92,92,.35);border:1.5px solid var(--coral)}
+.sh-busy{background:rgba(74,158,255,.3);border:1.5px solid var(--sky)}
+.sh-empty{background:var(--surface);border:1.5px solid var(--line)}
+.sh-divider{width:1px;height:20px;background:rgba(255,92,92,.25)}
+
+/* grid container */
+.sched-wrap{
+  background:var(--white);border-radius:var(--rl);
+  border:1.5px solid var(--line);overflow:hidden;
+  box-shadow:0 4px 24px rgba(0,0,0,.06);
+  user-select:none; /* prevent text selection while dragging */
+}
+
+.sg-head{display:grid;grid-template-columns:52px repeat(7,1fr)}
+.sg-corner{background:var(--surface);border-right:1.5px solid var(--line);border-bottom:1.5px solid var(--line);padding:10px 0}
+.sg-day{
+  background:var(--surface);border-bottom:1.5px solid var(--line);
+  border-right:1px solid rgba(0,0,0,.04);
+  padding:10px 4px;text-align:center;
+  font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;
+}
+.sg-day.today{color:var(--coral)}
+
+.sg-body{display:flex;flex-direction:column}
+.sg-row{display:grid;grid-template-columns:52px repeat(7,1fr)}
+
+.sg-time{
+  background:var(--surface);border-right:1.5px solid var(--line);
+  border-bottom:1px solid rgba(0,0,0,.04);
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-right:10px;height:34px;
+  font-size:10px;color:var(--muted);font-weight:600;
+}
+
+/* LARGER CELLS — easier to click & drag */
+.sg-cell{
+  height:34px;
+  border-bottom:1px solid rgba(0,0,0,.04);
+  border-right:1px solid rgba(0,0,0,.04);
+  cursor:crosshair;
+  transition:background .08s;
+  position:relative;
+}
+.sg-cell:hover{background:rgba(255,92,92,.1)}
+.sg-cell.f{background:rgba(255,92,92,.22)}
+.sg-cell.f:hover{background:rgba(255,92,92,.33)}
+.sg-cell.b{background:rgba(74,158,255,.18)}
+.sg-cell.b:hover{background:rgba(74,158,255,.28)}
+/* drag highlight preview */
+.sg-cell.drag-preview{background:rgba(255,92,92,.45)!important}
+.sg-cell.drag-erase{background:rgba(255,100,100,.1)!important}
+
+/* stats + btns same */
+.sched-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+.ss-card{background:var(--white);border-radius:var(--rm);border:1.5px solid var(--line);padding:20px;text-align:center}
+.ss-n{font-family:'Fraunces',serif;font-size:32px;font-weight:700;margin-bottom:4px}
+.ss-n.coral{color:var(--coral)}.ss-n.sky{color:var(--sky)}.ss-n.mint{color:var(--mint)}
+.ss-l{font-size:12px;color:var(--muted);font-weight:500}
+.sched-btns{display:flex;gap:10px;margin-top:20px}
+.btn-save{flex:1;padding:15px;border-radius:var(--r);background:var(--coral);color:#fff;font-size:14px;font-weight:800;border:none;cursor:pointer;transition:.2s;box-shadow:0 6px 20px rgba(255,92,92,.28);font-family:inherit}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(255,92,92,.38)}
+.btn-clear{padding:15px 24px;border-radius:var(--r);background:var(--white);color:var(--muted);font-size:14px;font-weight:700;border:1.5px solid var(--line);cursor:pointer;transition:.2s;font-family:inherit}
+.btn-clear:hover{border-color:var(--coral);color:var(--coral)}
+
+/* ═══════════════════════════════════════
+   07 · CHAT  — Discord-style
+═══════════════════════════════════════ */
+
+/* ── Outer shell: sidebar + main ── */
+.chat-shell{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  height:calc(100vh - 44px);
+  overflow:hidden;
+  background:var(--white);
+}
+
+/* ── LEFT SIDEBAR ── */
+.chat-sidebar{
+  display:flex;flex-direction:column;
+  background:#F0EBE3;
+  border-right:1px solid var(--line);
+  overflow:hidden;
+}
+.cs-header{
+  padding:16px 16px 12px;
+  border-bottom:1px solid var(--line);
+  background:#F0EBE3;
+}
+.cs-app-name{
+  font-family:'Fraunces',serif;font-size:16px;font-weight:700;
+  color:var(--ink);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.cs-app-name span{color:var(--coral)}
+.cs-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--white);border:1.5px solid var(--line);
+  border-radius:8px;padding:8px 12px;
+  font-size:12px;color:var(--muted);cursor:text;
+}
+.cs-body{flex:1;overflow-y:auto;padding:8px 0}
+.cs-body::-webkit-scrollbar{width:3px}
+.cs-body::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+
+/* Section labels */
+.cs-section{
+  padding:14px 16px 4px;
+  font-size:10px;font-weight:800;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cs-section-add{
+  font-size:16px;color:var(--muted);cursor:pointer;
+  line-height:1;transition:.15s;
+}
+.cs-section-add:hover{color:var(--coral)}
+
+/* Channel item */
+.ch-item{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 16px;border-radius:0;
+  cursor:pointer;transition:.15s;
+  font-size:14px;font-weight:500;color:var(--ink2);
+  position:relative;
+}
+.ch-item:hover{background:rgba(0,0,0,.05);color:var(--ink)}
+.ch-item.on{
+  background:var(--peach);color:var(--coral);font-weight:700;
+}
+.ch-item.on::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--coral);border-radius:0 2px 2px 0;
+}
+.ch-ico{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.ch-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-badge{
+  min-width:18px;height:18px;background:var(--coral);border-radius:50px;
+  font-size:10px;font-weight:800;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 5px;flex-shrink:0;
+}
+.ch-online{
+  font-size:10px;color:#00C17C;font-weight:700;flex-shrink:0;
+}
+
+/* DM item */
+.dm-item{
+  display:flex;align-items:center;gap:10px;
+  padding:6px 16px;cursor:pointer;transition:.15s;
+  border-radius:0;
+}
+.dm-item:hover{background:rgba(0,0,0,.05)}
+.dm-item.on{background:var(--peach)}
+.dm-av{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  position:relative;
+}
+.dm-dot{
+  position:absolute;bottom:0;right:0;
+  width:9px;height:9px;border-radius:50%;
+  background:#00C17C;border:1.5px solid #F0EBE3;
+}
+.dm-name{font-size:13px;font-weight:500;color:var(--ink2);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dm-item.on .dm-name{color:var(--ink);font-weight:700}
+.dm-unread{
+  min-width:16px;height:16px;background:var(--coral);border-radius:50px;
+  font-size:9px;font-weight:800;color:#fff;
+  display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
+
+/* Bottom user bar */
+.cs-user-bar{
+  padding:10px 12px;border-top:1px solid var(--line);
+  background:#E8E2DA;
+  display:flex;align-items:center;gap:10px;
+}
+.cub-av{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--coral),var(--coral2));
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  position:relative;
+}
+.cub-dot{
+  position:absolute;bottom:0;right:0;width:10px;height:10px;
+  border-radius:50%;background:#00C17C;border:1.5px solid #E8E2DA;
+}
+.cub-name{font-size:13px;font-weight:700;color:var(--ink);flex:1}
+.cub-status{font-size:11px;color:var(--muted)}
+.cub-actions{display:flex;gap:4px;margin-left:auto}
+.cub-btn{
+  width:28px;height:28px;border-radius:6px;
+  background:transparent;border:none;
+  font-size:14px;cursor:pointer;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  transition:.15s;
+}
+.cub-btn:hover{background:rgba(0,0,0,.1);color:var(--ink)}
+
+/* ── MAIN CHAT AREA ── */
+.chat-main{display:flex;flex-direction:column;overflow:hidden;background:var(--white)}
+
+/* Channel/DM topbar */
+.chat-topbar{
+  display:flex;align-items:center;gap:12px;
+  padding:0 18px;height:52px;flex-shrink:0;
+  background:var(--white);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 var(--line);
+}
+.ct-icon{font-size:18px;color:var(--muted)}
+.ct-name{font-size:15px;font-weight:800;color:var(--ink)}
+.ct-desc{font-size:12px;color:var(--muted);margin-left:2px}
+.ct-divider{width:1px;height:20px;background:var(--line)}
+.ct-actions{margin-left:auto;display:flex;gap:6px}
+.ct-act{
+  width:32px;height:32px;border-radius:8px;
+  background:none;border:none;font-size:15px;
+  cursor:pointer;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;transition:.15s;
+}
+.ct-act:hover{background:var(--surface);color:var(--ink)}
+
+/* Members online strip (community only) */
+.online-strip{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px;
+  background:var(--surface);
+  border-bottom:1px solid var(--line);
+  font-size:12px;color:var(--muted);flex-shrink:0;
+}
+.os-av{
+  width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+  border:2px solid var(--white);margin-left:-6px;
+  flex-shrink:0;
+}
+.os-av:first-child{margin-left:0}
+.os-green-dot{
+  width:8px;height:8px;border-radius:50%;background:#00C17C;flex-shrink:0;
+}
+
+/* Messages area */
+.msgs{
+  flex:1;overflow-y:auto;
+  padding:16px 18px;
+  display:flex;flex-direction:column;gap:2px;
+  background:var(--white);
+}
+.msgs::-webkit-scrollbar{width:5px}
+.msgs::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+/* date separator */
+.date-sep{
+  display:flex;align-items:center;gap:10px;
+  font-size:10px;font-weight:700;color:var(--muted);
+  margin:12px 0 8px;letter-spacing:.3px;
+}
+.date-sep::before,.date-sep::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* Community message — Discord layout: avatar left, name + text */
+.cmsg{
+  display:flex;gap:12px;padding:4px 0;
+  border-radius:8px;transition:.1s;
+}
+.cmsg:hover{background:var(--surface);margin:0 -8px;padding:4px 8px}
+.cmsg-av{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.cmsg-body{flex:1;min-width:0}
+.cmsg-header{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+.cmsg-name{font-size:13px;font-weight:800;color:var(--ink)}
+.cmsg-name.me-name{color:var(--coral)}
+.cmsg-time{font-size:10px;color:var(--muted)}
+.cmsg-badge{
+  font-size:9px;font-weight:800;padding:1px 7px;border-radius:50px;
+}
+.cmsg-badge-mod{background:rgba(255,92,92,.12);color:var(--coral)}
+.cmsg-badge-free{background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.cmsg-text{font-size:14px;color:var(--ink2);line-height:1.55;word-break:break-word}
+
+/* Continued message (no avatar — grouped) */
+.cmsg-cont{
+  display:flex;gap:12px;padding:1px 0;
+  border-radius:8px;transition:.1s;
+}
+.cmsg-cont:hover{background:var(--surface);margin:0 -8px;padding:1px 8px}
+.cmsg-cont-time{
+  width:36px;flex-shrink:0;
+  font-size:10px;color:transparent;
+  text-align:right;padding-top:2px;
+  transition:.1s;
+}
+.cmsg-cont:hover .cmsg-cont-time{color:var(--muted)}
+.cmsg-cont-text{font-size:14px;color:var(--ink2);line-height:1.55;word-break:break-word}
+
+/* Reaction pills */
+.cmsg-reactions{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
+.reaction{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 9px;border-radius:50px;
+  background:var(--surface);border:1.5px solid var(--line);
+  font-size:12px;cursor:pointer;transition:.15s;
+}
+.reaction:hover{border-color:var(--coral);background:var(--peach)}
+.reaction.active{border-color:var(--coral);background:var(--peach);color:var(--coral);font-weight:700}
+.reaction-count{font-size:11px;font-weight:700;color:var(--ink2)}
+
+/* System / join messages */
+.sys-msg{
+  text-align:center;font-size:12px;color:var(--muted);
+  padding:6px 0;display:flex;align-items:center;gap:8px;
+  justify-content:center;
+}
+.sys-msg::before,.sys-msg::after{content:'';width:40px;height:1px;background:var(--line)}
+
+/* Private DM bubble style (keep existing) */
+.msg-row{display:flex;align-items:flex-end;gap:8px}
+.msg-row.me{flex-direction:row-reverse}
+.msg-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#FFD0D0,#FF8A65);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.bubble{max-width:62%;padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.55}
+.bubble.t{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bubble.m{background:var(--coral);color:#fff;border-bottom-right-radius:4px}
+.msg-time{font-size:10px;color:var(--muted);margin-top:2px}
+.msg-row:not(.me) .msg-time{text-align:left}
+.msg-row.me .msg-time{text-align:right}
+
+/* Input area */
+.chat-input-area{
+  padding:12px 18px 14px;
+  background:var(--white);
+  border-top:1px solid var(--line);
+  flex-shrink:0;
+}
+.chat-input-box{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:4px 8px 4px 14px;
+  transition:.15s;
+}
+.chat-input-box:focus-within{
+  border-color:var(--coral);
+  background:var(--white);
+  box-shadow:0 0 0 3px rgba(255,92,92,.08);
+}
+.chat-inp{
+  flex:1;background:none;border:none;outline:none;
+  font-size:14px;color:var(--ink);padding:8px 0;
+  font-family:inherit;
+}
+.chat-inp::placeholder{color:var(--muted)}
+.chat-inp-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:none;border:none;font-size:18px;
+  cursor:pointer;color:var(--muted);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:.15s;
+}
+.chat-inp-icon:hover{background:var(--peach);color:var(--coral)}
+.chat-send{
+  width:36px;height:36px;border-radius:8px;flex-shrink:0;
+  background:var(--coral);border:none;color:#fff;font-size:16px;
+  cursor:pointer;transition:.15s;
+  display:flex;align-items:center;justify-content:center;
+}
+.chat-send:hover{background:#e64040;transform:scale(1.05)}
+.chat-send:disabled{background:var(--line);cursor:default;transform:none}
+
+/* Channel welcome banner */
+.ch-welcome{
+  display:flex;flex-direction:column;align-items:flex-start;
+  padding:20px 18px 16px;border-bottom:1px solid var(--line);
+  margin-bottom:8px;
+}
+.ch-welcome-ico{font-size:40px;margin-bottom:10px}
+.ch-welcome-h{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:4px}
+.ch-welcome-p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ═══════════════════════════════════════
+   08 · PREMIUM (unchanged)
+═══════════════════════════════════════ */
+.prem-page{max-width:640px;margin:0 auto;padding:48px 24px 80px;text-align:center}
+.prem-badge{display:inline-flex;align-items:center;gap:8px;background:var(--gold-bg);border:1.5px solid #FFE082;border-radius:50px;padding:8px 18px;font-size:13px;font-weight:700;color:#A07800;margin-bottom:24px}
+.prem-title{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:700;margin-bottom:12px;line-height:1.1}
+.prem-title em{font-style:italic;color:var(--coral)}
+.prem-sub{font-size:15px;color:var(--muted);margin-bottom:44px;line-height:1.7}
+.price-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;text-align:left}
+.pc{background:var(--white);border:2px solid var(--line);border-radius:var(--rl);padding:28px 24px;position:relative;transition:.3s}
+.pc:hover{border-color:var(--coral);transform:translateY(-4px);box-shadow:var(--sh2)}
+.pc.feat{border-color:var(--coral);background:var(--peach)}
+.pc-pop{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--coral);color:#fff;font-size:10px;font-weight:800;padding:4px 14px;border-radius:50px;letter-spacing:.5px;white-space:nowrap}
+.pc-plan{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
+.pc-amt{font-family:'Fraunces',serif;font-size:38px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.pc-per{font-size:13px;color:var(--muted);margin-bottom:22px}
+.pc-feat{list-style:none;display:flex;flex-direction:column;gap:8px}
+.pc-feat li{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink2)}
+.pf-yes{color:var(--mint);font-size:14px}
+.pf-no{color:var(--line);font-size:14px}
+.pf-no+span{color:var(--muted)}
+.pc-btn{width:100%;margin-top:22px;padding:14px;border-radius:var(--r);font-size:14px;font-weight:800;cursor:pointer;border:none;font-family:inherit;transition:.2s}
+.pc-btn-fill{background:var(--coral);color:#fff;box-shadow:0 6px 18px rgba(255,92,92,.28)}
+.pc-btn-fill:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(255,92,92,.38)}
+.pc-btn-out{background:var(--white);color:var(--ink2);border:2px solid var(--line)}
+.pc-btn-out:hover{border-color:var(--coral);color:var(--coral)}
+.prem-note{font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px}
+
+/* ═══════════════════════════════════════
+   09 · ADMIN (unchanged)
+═══════════════════════════════════════ */
+.admin-page{padding:32px}
+.adm-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.adm-title{font-family:'Fraunces',serif;font-size:26px;font-weight:700}
+.adm-sub{font-size:13px;color:var(--muted);margin-top:3px}
+.adm-datebadge{background:var(--surface);border:1.5px solid var(--line);border-radius:50px;padding:8px 16px;font-size:12px;font-weight:700;color:var(--ink2)}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--white);border:1.5px solid var(--line);border-radius:var(--rl);padding:22px 20px;transition:.2s}
+.kpi:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+.kpi-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px}
+.ki-a{background:var(--peach)}.ki-b{background:var(--sky-bg)}.ki-c{background:var(--gold-bg)}.ki-d{background:var(--mint-bg)}
+.kpi-n{font-family:'Fraunces',serif;font-size:32px;font-weight:700;line-height:1;margin-bottom:4px}
+.kn-a{color:var(--coral)}.kn-b{color:var(--sky)}.kn-c{color:var(--gold)}.kn-d{color:var(--mint)}
+.kpi-l{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.kpi-ch{font-size:11px;font-weight:700;color:#00A85A}
+.kpi-ch.neg{color:#FF3B30}
+.adm-grid{display:grid;grid-template-columns:1fr 340px;gap:20px}
+.adm-card{background:var(--white);border:1.5px solid var(--line);border-radius:var(--rl);overflow:hidden}
+.adm-ch{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.adm-ct{font-size:14px;font-weight:800;color:var(--ink)}
+.chart-area{padding:16px 20px 12px;display:flex;align-items:flex-end;gap:8px;height:180px}
+.cb2{flex:1;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--coral) 0%,rgba(255,92,92,.25) 100%);transition:.3s;cursor:pointer;position:relative}
+.cb2:hover{filter:brightness(1.1)}
+.cb2-val{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;color:var(--coral);white-space:nowrap;opacity:0;transition:.2s}
+.cb2:hover .cb2-val{opacity:1}
+.chart-days{display:flex;padding:0 20px 12px;gap:8px}
+.cd{flex:1;text-align:center;font-size:10px;font-weight:600;color:var(--muted)}
+.adm-table{width:100%;border-collapse:collapse}
+.adm-th{padding:11px 16px;font-size:10px;font-weight:800;color:var(--muted);text-align:left;letter-spacing:.5px;text-transform:uppercase;background:var(--surface);border-bottom:1px solid var(--line)}
+.adm-td{padding:13px 16px;font-size:13px;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:middle}
+.adm-tr:hover .adm-td{background:#FAFAFE}
+.uc{display:flex;align-items:center;gap:10px}
+.ua{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--coral2));display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.un{font-size:13px;font-weight:700;color:var(--ink)}
+.ue{font-size:10px;color:var(--muted)}
+.badge{display:inline-flex;padding:3px 9px;border-radius:50px;font-size:10px;font-weight:800}
+.bg-prem{background:var(--gold-bg);color:#A07800}
+.bg-free{background:var(--surface);color:var(--muted)}
+.bg-ok{background:var(--mint-bg);color:#007A64}
+.bg-warn{background:#FFF3CD;color:#856404}
+.bg-bad{background:#FFECEC;color:#C0392B}
+.adm-act{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:.2s;margin-right:4px}
+.aa-view{background:var(--surface);color:var(--ink2)}
+.aa-view:hover{background:var(--sky-bg);color:var(--sky)}
+.aa-block{background:#FFECEC;color:#C0392B}
+.aa-block:hover{background:#FFD5D5}
+.report-list{padding:8px 0}
+.rep-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;transition:.2s;border-left:3px solid transparent}
+.rep-item:hover{background:var(--surface);border-left-color:var(--coral)}
+.rep-ico{width:36px;height:36px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rep-t{font-size:13px;font-weight:700;color:var(--ink)}
+.rep-s{font-size:11px;color:var(--muted);margin-top:2px}
+.rep-st{margin-left:auto;flex-shrink:0}
+.quick-stats{padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.qs-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--line)}
+.qs-l{font-size:12px;font-weight:600;color:var(--muted)}
+.qs-n{font-family:'Fraunces',serif;font-size:22px;font-weight:700}
+.qs-a{color:var(--coral)}.qs-b{color:var(--sky)}.qs-c{color:var(--gold)}.qs-d{color:var(--mint)}
+/* ═══════════════════════════════════════
+   MY PROFILE  +  USER PROFILE
+═══════════════════════════════════════ */
+
+/* ── Shared profile shell ── */
+.profile-page{max-width:680px;margin:0 auto;min-height:100vh;background:var(--white)}
+
+/* Cover photo area */
+.prof-cover{
+  height:200px;
+  background:linear-gradient(135deg,#FFE8DE 0%,#FFD0BE 50%,#FFB8A0 100%);
+  position:relative;overflow:hidden;
+}
+.prof-cover-img{width:100%;height:100%;object-fit:cover}
+.prof-cover-edit{
+  position:absolute;bottom:14px;right:14px;
+  padding:8px 16px;border-radius:50px;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.6);
+  font-size:12px;font-weight:700;color:var(--ink);
+  cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s;
+}
+.prof-cover-edit:hover{background:#fff}
+.prof-cover-back{
+  position:absolute;top:14px;left:14px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(8px);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:var(--ink2);transition:.2s;
+}
+.prof-cover-back:hover{background:#fff}
+
+/* Avatar row */
+.prof-av-row{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 24px 0;
+  margin-top:-36px;position:relative;z-index:2;
+}
+.prof-av{
+  width:90px;height:90px;border-radius:50%;
+  border:4px solid var(--white);
+  background:linear-gradient(135deg,var(--coral),var(--coral2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;flex-shrink:0;
+  box-shadow:0 4px 20px rgba(0,0,0,.12);
+  position:relative;cursor:pointer;
+}
+.prof-av-edit-btn{
+  position:absolute;bottom:2px;right:2px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--coral);border:2px solid var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;cursor:pointer;
+}
+.prof-av-actions{display:flex;gap:8px;padding-bottom:8px}
+
+/* Action buttons on profile */
+.prof-btn-msg{
+  padding:10px 22px;border-radius:50px;
+  background:var(--coral);color:#fff;
+  font-size:14px;font-weight:800;border:none;cursor:pointer;
+  box-shadow:0 4px 16px rgba(255,92,92,.28);transition:.2s;font-family:inherit;
+}
+.prof-btn-msg:hover{transform:translateY(-1px);background:#e64040}
+.prof-btn-save{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--white);border:1.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;transition:.2s;
+}
+.prof-btn-save:hover{border-color:var(--coral);background:var(--peach)}
+.prof-btn-more{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--white);border:1.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;transition:.2s;
+}
+.prof-btn-more:hover{border-color:var(--line);background:var(--surface)}
+.prof-btn-edit{
+  padding:10px 22px;border-radius:50px;
+  background:var(--white);color:var(--ink);
+  font-size:14px;font-weight:700;border:1.5px solid var(--line);
+  cursor:pointer;transition:.2s;font-family:inherit;
+}
+.prof-btn-edit:hover{border-color:var(--coral);color:var(--coral)}
+
+/* Info block */
+.prof-info{padding:12px 24px 0}
+.prof-name{
+  font-family:'Fraunces',serif;font-size:24px;font-weight:700;
+  margin-bottom:3px;display:flex;align-items:center;gap:10px;
+}
+.prof-verified{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--mint-bg);color:var(--mint);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:11px;font-weight:800;padding:3px 10px;border-radius:50px;
+}
+.prof-handle{font-size:14px;color:var(--muted);margin-bottom:6px}
+.prof-meta{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--ink2);margin-bottom:12px}
+.prof-meta-item{display:flex;align-items:center;gap:5px}
+.prof-bio{font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:14px}
+
+/* Stats row */
+.prof-stats{
+  display:flex;gap:0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  margin:0 0 20px;
+}
+.prof-stat{
+  flex:1;text-align:center;padding:14px 10px;
+  border-right:1px solid var(--line);cursor:pointer;transition:.15s;
+}
+.prof-stat:last-child{border-right:none}
+.prof-stat:hover{background:var(--surface)}
+.prof-stat-n{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--coral);line-height:1}
+.prof-stat-l{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* Section inside profile */
+.prof-section{padding:0 24px;margin-bottom:24px}
+.prof-section-h{
+  font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.prof-section-edit{
+  font-size:12px;font-weight:700;color:var(--coral);
+  cursor:pointer;letter-spacing:0;text-transform:none;
+}
+
+/* Tag cloud */
+.prof-tags{display:flex;flex-wrap:wrap;gap:8px}
+.prof-tag{
+  padding:7px 16px;border-radius:50px;font-size:13px;font-weight:600;
+  border:1.5px solid var(--line);background:var(--white);color:var(--ink2);
+}
+.prof-tag.goal{border-color:var(--mint);background:var(--mint-bg);color:#007A64}
+
+/* Schedule mini preview */
+.prof-sched{
+  background:var(--surface);border-radius:var(--rm);
+  padding:16px;
+}
+.prof-sched-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px}
+.psd{font-size:9px;text-align:center;font-weight:800;color:var(--muted);letter-spacing:.3px}
+.psd.today{color:var(--coral)}
+.prof-sched-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.psc{display:flex;flex-direction:column;gap:2px}
+.pss{height:10px;border-radius:3px;background:var(--line)}
+.pss.f{background:rgba(255,92,92,.38)}
+.pss.b{background:rgba(74,158,255,.25)}
+.prof-sched-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.prof-sched-legend{display:flex;gap:14px}
+.psl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.psl-sq{width:10px;height:10px;border-radius:3px}
+
+/* Rating display */
+.prof-rating-row{display:flex;align-items:center;gap:12px}
+.prof-stars{
+  display:flex;gap:3px;
+}
+.prof-star{font-size:20px;cursor:pointer;transition:.15s;color:#DDD}
+.prof-star.on{color:var(--gold)}
+.prof-star:hover{transform:scale(1.2)}
+.prof-rating-n{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--ink)}
+.prof-rating-sub{font-size:12px;color:var(--muted)}
+
+/* Recent reviews */
+.review-card{
+  background:var(--surface);border-radius:var(--rm);
+  padding:14px 16px;margin-bottom:10px;
+}
+.review-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.rev-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--coral2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rev-name{font-size:13px;font-weight:700}
+.rev-meta{font-size:11px;color:var(--muted)}
+.rev-stars{display:flex;gap:2px;font-size:13px;margin-left:auto}
+.rev-text{font-size:13px;color:var(--ink2);line-height:1.6}
+
+/* SNS links */
+.prof-sns{display:flex;flex-wrap:wrap;gap:8px}
+.sns-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:50px;
+  border:1.5px solid var(--line);background:var(--white);
+  font-size:13px;font-weight:600;color:var(--ink2);
+  cursor:pointer;transition:.15s;text-decoration:none;
+}
+.sns-chip:hover{border-color:var(--coral);color:var(--coral);background:var(--peach)}
+
+/* Edit form inline */
+.prof-edit-field{margin-bottom:16px}
+.prof-edit-label{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.prof-edit-input{
+  width:100%;border:1.5px solid var(--line);border-radius:var(--r);
+  padding:12px 16px;font-size:14px;color:var(--ink);
+  background:var(--surface);transition:.2s;outline:none;font-family:inherit;
+}
+.prof-edit-input:focus{border-color:var(--coral);background:var(--white);box-shadow:0 0 0 3px rgba(255,92,92,.08)}
+.prof-edit-input::placeholder{color:var(--muted)}
+
+/* Photo grid (edit mode) */
+.prof-photo-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:170px 110px;gap:8px;margin-bottom:20px;
+}
+.ppg-main{
+  grid-column:1;grid-row:1/3;
+  border-radius:var(--rl);overflow:hidden;
+  background:linear-gradient(160deg,var(--peach),#FFD8CC);
+  position:relative;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--coral);
+}
+.ppg-sec{
+  border-radius:var(--rm);overflow:hidden;
+  background:var(--surface);border:1.5px dashed var(--line);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;font-size:24px;color:var(--muted);
+  flex-direction:column;gap:4px;
+}
+.ppg-sec:hover{border-color:var(--coral);background:var(--peach);color:var(--coral)}
+.ppg-sec-lbl{font-size:10px;font-weight:600}
+.ppg-main-emo{font-size:64px;opacity:.25;position:absolute}
+.ppg-main-add{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.ppg-badge{position:absolute;bottom:10px;left:10px;background:var(--coral);color:#fff;font-size:9px;font-weight:800;padding:2px 9px;border-radius:50px;text-transform:uppercase}
+
+/* Match score ring (on other's profile) */
+.match-score-ring{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:72px;height:72px;border-radius:50%;
+  border:3px solid var(--coral);background:var(--peach);
+  flex-shrink:0;
+}
+.msr-n{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--coral);line-height:1}
+.msr-l{font-size:10px;color:var(--coral);font-weight:700}
+
+/* Common time slots */
+.common-slot{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--peach);border:1px solid rgba(255,92,92,.2);
+  border-radius:50px;padding:6px 14px;
+  font-size:13px;font-weight:600;color:var(--coral);
+}
+
+/* Sticky bottom action (other profile) */
+.prof-sticky-cta{
+  position:sticky;bottom:0;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  padding:14px 24px;
+  display:flex;gap:10px;
+}
+</style>
+</head>
+<body>
+
+<!-- DEV NAV -->
+<div class="nav-bar">
+  <button class="nt on"  onclick="go('landing')">🏠 Нүүр</button>
+  <button class="nt"     onclick="go('login')">🔑 Нэвтрэх</button>
+  <button class="nt"     onclick="go('otp')">📱 OTP</button>
+  <button class="nt"     onclick="go('setup')">✏️ Профайл</button>
+  <button class="nt"     onclick="go('discover')">💫 Discover</button>
+  <button class="nt"     onclick="go('sched')">📅 Хуваарь</button>
+  <button class="nt"     onclick="go('chat')">💬 Чат</button>
+  <button class="nt"     onclick="go('premium')">👑 Premium</button>
+  <button class="nt"     onclick="go('admin')">⚙️ Admin</button>
+  <button class="nt"     onclick="go('my-profile')">👤 Миний профайл</button>
+  <button class="nt"     onclick="go('user-profile')">🔍 Профайл харах</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  01 · LANDING
+══════════════════════════════════════════════ -->
+<div id="landing" class="sc on">
+<div class="land">
+  <div class="land-blob"></div>
+  <nav class="land-nav">
+    <div class="land-logo">
+      Num<span style="color:var(--coral)">Connect</span>
+      <span class="logo-pill">МУИС-Д</span>
+    </div>
+    <div class="land-nav-links">
+      <span class="land-link">Онцлог</span>
+      <span class="land-link">Хэрхэн ажилладаг</span>
+      <span class="land-link">Premium</span>
+      <button class="btn-nav" onclick="go('login')">Нэвтрэх →</button>
+    </div>
+  </nav>
+  <div class="land-hero">
+    <div class="land-eyebrow"><span class="eyebrow-dot"></span>МУИС-Д оюутнуудад зориулсан</div>
+    <h1 class="land-h1">Хуваарьдаа<br><em>таарсан</em> найзаа<br>ол.</h1>
+    <p class="land-p">Outlook цахим шуудангаараа нэвтэрч, хичээлийн хуваарьдаа тохирсон оюутнуудтай холбогд. Судалгаа, проект, хамт амрах.</p>
+    <div class="land-btns">
+      <button class="btn-cta btn-cta-fill" onclick="go('login')">Үнэгүй эхлэх →</button>
+      <button class="btn-cta btn-cta-out">Хэрхэн ажилладаг вэ</button>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone phone1 side">
+        <div class="ph-top"></div>
+        <div class="ph-card ph-card-3"><div class="ph-emo">🧑‍🔬</div><div class="ph-name">Батмөнх</div><div class="ph-sub">Эдийн засаг · 2-р курс</div><div class="ph-match">📅 72% таарсан</div></div>
+      </div>
+      <div class="phone phone2 center">
+        <div class="ph-top"></div>
+        <div class="ph-card ph-card-1"><div class="ph-emo">👩‍💻</div><div class="ph-name">Номинчимэг</div><div class="ph-sub">Программ хангамж · 3-р курс</div><div class="ph-match">❤️ 87% таарсан</div></div>
+      </div>
+      <div class="phone phone3 side">
+        <div class="ph-top"></div>
+        <div class="ph-card ph-card-2"><div class="ph-emo">👩‍🎨</div><div class="ph-name">Энхтуяа</div><div class="ph-sub">Дизайн · 1-р курс</div><div class="ph-match">⭐ 79% таарсан</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-strip">
+    <div class="stat-item"><span class="stat-n">1,200+</span><span class="stat-l">Бүртгэлтэй оюутан</span></div>
+    <div class="stat-item"><span class="stat-n">340+</span><span class="stat-l">Амжилттай холбоо</span></div>
+    <div class="stat-item"><span class="stat-n">87%</span><span class="stat-l">Сэтгэл ханамж</span></div>
+  </div>
+  <div class="feat-section">
+    <div class="feat-title">Яагаад NumConnect вэ?</div>
+    <div class="feat-sub">Зүгээр л танилцах биш — зорилготой хамтрагч ол</div>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-ico fi-a">📅</div><div class="feat-card-t">Хуваарьт суурилсан</div><div class="feat-card-p">7×24 хуваарийн grid дээр чөлөөт цагаа оруулж, ижил цагтай оюутнуудтай автоматаар холбогд.</div></div>
+      <div class="feat-card"><div class="feat-ico fi-b">🔐</div><div class="feat-card-t">100% Баталгаажсан</div><div class="feat-card-p">Зөвхөн @num.edu.mn цахим шуудантай оюутнууд нэвтэрнэ. Аюулгүй, найдвартай орчин.</div></div>
+      <div class="feat-card"><div class="feat-ico fi-c">🎯</div><div class="feat-card-t">Нээлттэй жагсаалт</div><div class="feat-card-p">Бүртгэлтэй бүх оюутныг хар. Хуваарийн оноогоор эрэмбэлэгдсэн — хамгийн таарсан нь эхэнд.</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  02 · LOGIN
+══════════════════════════════════════════════ -->
+<div id="login" class="sc">
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-top">
+      <div class="login-logo">Num<span style="color:var(--coral)">Connect</span></div>
+      <div class="login-tagline">МУИС-Д оюутнуудын платформ</div>
+    </div>
+    <div class="login-body">
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:6px">Нэвтрэх</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:24px">Outlook цахим шуудангаараа нэвтэрнэ үү</div>
+      <div class="fg">
+        <label class="lbl">ЦАХИМ ШУУДАН</label>
+        <input class="inp" type="email" placeholder="20B1NUM0042@num.edu.mn" value="20B1NUM0042@num.edu.mn">
+        <div class="hint">@num.edu.mn эсвэл @муис-д.edu.mn хаяг шаардлагатай</div>
+      </div>
+      <button class="btn-main" onclick="go('otp')">OTP код авах →</button>
+      <div class="or-row">эсвэл</div>
+      <button class="btn-oauth">🏫 Outlook OAuth-аар нэвтрэх</button>
+    </div>
+    <div class="login-footer">Анх удаа нэвтэрч байна уу? Профайл автоматаар үүснэ.<br><span style="color:var(--coral);cursor:pointer;font-weight:700">Үйлчилгээний нөхцөл</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  03 · OTP
+══════════════════════════════════════════════ -->
+<div id="otp" class="sc">
+<div class="otp-wrap">
+  <div class="otp-card">
+    <div class="otp-icon">📨</div>
+    <div class="otp-title">Код оруулна уу</div>
+    <div class="otp-sub"><strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2e1c1e6c1f607b631e1e1a1c6e405b43004b4a5b004340">[email&#160;protected]</a></strong> хаяг руу 6 оронтой код илгээлээ</div>
+    <div class="otp-inputs">
+      <input class="otp-inp filled" maxlength="1" value="4">
+      <input class="otp-inp filled" maxlength="1" value="2">
+      <input class="otp-inp filled" maxlength="1" value="7">
+      <input class="otp-inp" maxlength="1" placeholder="·">
+      <input class="otp-inp" maxlength="1" placeholder="·">
+      <input class="otp-inp" maxlength="1" placeholder="·">
+    </div>
+    <div class="otp-timer">Хүчинтэй хугацаа: <span>04:22</span></div>
+    <button class="btn-main" onclick="go('setup')">Баталгаажуулах →</button>
+    <div style="margin-top:18px;font-size:13px;color:var(--muted)">Код ирсэнгүй? <span class="otp-resend">Дахин илгээх</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  04 · PROFILE SETUP  ★ REBUILT
+══════════════════════════════════════════════ -->
+<div id="setup" class="sc">
+<div class="setup-wrap">
+  <!-- Sticky step bar -->
+  <div class="step-bar">
+    <div class="step-dots">
+      <div class="sd done"></div>
+      <div class="sd active"></div>
+      <div class="sd"></div>
+      <div class="sd"></div>
+    </div>
+    <div class="step-label">Алхам <strong>2/4</strong> — Үндсэн мэдээлэл</div>
+    <button onclick="go('discover')" style="font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600">Алгасах →</button>
+  </div>
+
+  <div class="step-content">
+    <div class="step-head-h">Профайл бүрдүүлэх</div>
+    <div class="step-head-p">Таны профайл бусдад хэрхэн харагдахыг тодорхойлно. Хожим засах боломжтой.</div>
+
+    <!-- ── Photo upload ── -->
+    <div style="margin-bottom:28px">
+      <div class="lbl" style="margin-bottom:12px">ПРОФАЙЛ ЗУРАГ <span style="color:var(--coral)">*</span><span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0"> — дор хаяж 1, дээд тал 5</span></div>
+      <div class="photo-upload-area">
+        <!-- Main slot -->
+        <div class="ph-main">
+          <div class="ph-main-emo">👤</div>
+          <div class="ph-main-plus">+</div>
+          <div class="ph-main-lbl">Гол зураг</div>
+          <div class="ph-main-sub">Дарж эсвэл drag & drop</div>
+          <div class="ph-main-badge">ГОЛ</div>
+        </div>
+        <!-- Secondary slots -->
+        <div class="ph-sec"><div class="ph-sec-plus">+</div><div class="ph-sec-lbl">Зураг 2</div></div>
+        <div class="ph-sec"><div class="ph-sec-plus">+</div><div class="ph-sec-lbl">Зураг 3</div></div>
+        <div class="ph-sec"><div class="ph-sec-plus">+</div><div class="ph-sec-lbl">Зураг 4</div></div>
+        <div class="ph-sec"><div class="ph-sec-plus">+</div><div class="ph-sec-lbl">Зураг 5</div></div>
+      </div>
+    </div>
+
+    <!-- Basic fields -->
+    <div class="fg">
+      <label class="lbl">НЭР <span style="color:var(--coral)">*</span></label>
+      <input class="inp" placeholder="Таны нэр" value="Мягмарсүрэн Д.">
+    </div>
+
+    <div class="row2">
+      <div class="fg">
+        <label class="lbl">МЭРГЭЖИЛ <span style="color:var(--coral)">*</span></label>
+        <select class="inp" style="cursor:pointer">
+          <option>Программ хангамж</option>
+          <option>Мэдээллийн технологи</option>
+          <option>Бизнесийн удирдлага</option>
+          <option>Эдийн засаг</option>
+          <option>Хууль</option>
+          <option>Математик</option>
+          <option>Дизайн</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="lbl">ДАМЖАА <span style="color:var(--coral)">*</span></label>
+        <div class="year-row">
+          <button class="yr-pill">1</button>
+          <button class="yr-pill">2</button>
+          <button class="yr-pill on">3</button>
+          <button class="yr-pill">4</button>
+          <button class="yr-pill">5</button>
+          <button class="yr-pill">6</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label class="lbl">ТОВЧ ТАНИЛЦУУЛГА <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(132/300)</span></label>
+      <textarea class="inp" rows="3" style="resize:none">Программ хангамжийн 3-р курсын оюутан. Хиймэл оюун, веб хөгжүүлэлтэд сонирхолтой. Хамт код бичих, кофе уух хүнийг хайж байна ☕</textarea>
+    </div>
+
+    <!-- Interests -->
+    <div class="fg">
+      <label class="lbl">СОНИРХОЛ / ХОББИ <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">— хэд ч дарж болно</span></label>
+      <div class="tag-wrap">
+        <button class="tag on">💻 Код бичих</button>
+        <button class="tag on">☕ Кофе</button>
+        <button class="tag on">📖 Уншлага</button>
+        <button class="tag">🎵 Хөгжим</button>
+        <button class="tag">⚽ Спорт</button>
+        <button class="tag">🎬 Кино</button>
+        <button class="tag">✈️ Аялал</button>
+        <button class="tag">🍳 Хоол хийх</button>
+        <button class="tag">📷 Фото</button>
+        <button class="tag">🎨 Дизайн</button>
+        <button class="tag">🧬 Шинжлэх ухаан</button>
+        <button class="tag">🎮 Тоглоом</button>
+      </div>
+    </div>
+
+    <!-- Goals -->
+    <div class="fg">
+      <label class="lbl">ХАМТРАХ ЗОРИЛГО</label>
+      <div class="tag-wrap">
+        <button class="tag goal-tag on">📚 Хамт суралцах</button>
+        <button class="tag goal-tag on">💻 Проект</button>
+        <button class="tag goal-tag">🔬 Судалгаа</button>
+        <button class="tag goal-tag">☕ Амрах</button>
+        <button class="tag goal-tag">🗣️ Хэлний практик</button>
+      </div>
+    </div>
+
+    <!-- SNS (optional) -->
+    <div class="fg">
+      <label class="lbl">SNS ХОЛБООСУУД <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">— заавал биш</span></label>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
+        <div class="sns-row"><span class="sns-lbl">Instagram</span><input class="inp" placeholder="@username" style="padding:10px 14px"></div>
+        <div class="sns-row"><span class="sns-lbl">Facebook</span><input class="inp" placeholder="facebook.com/..." style="padding:10px 14px"></div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div><!-- spacer for sticky footer -->
+  </div>
+
+  <!-- Sticky footer -->
+  <div class="setup-footer">
+    <button class="back-btn" onclick="go('otp')">← Буцах</button>
+    <button class="next-btn" onclick="go('sched')">Дараах: Хуваарь →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  05 · DISCOVER  ★ REBUILT (swipe + list toggle)
+══════════════════════════════════════════════ -->
+<div id="discover" class="sc">
+<div class="modal-ov" id="mm">
+  <div class="match-modal">
+    <div class="mm-sparkle">🎉</div>
+    <div class="mm-title">Match!</div>
+    <div class="mm-sub">Та хоёр хоёулаа like дарлаа</div>
+    <div class="mm-avs">
+      <div class="mm-av">😊</div><div class="mm-heart">♥</div><div class="mm-av">👩‍💻</div>
+    </div>
+    <div class="mm-btns">
+      <button class="mm-btn-chat" onclick="go('chat')">💬 Чат эхлүүлэх</button>
+      <button class="mm-btn-later" onclick="document.getElementById('mm').classList.remove('show')">Дараа</button>
+    </div>
+  </div>
+</div>
+
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="icon-nav">
+    <div class="nav-logo-sm">N</div>
+    <div class="n-ico on" title="Discover">💫</div>
+    <div class="n-ico" title="Мессеж" onclick="go('chat')">💬<div class="n-badge">3</div></div>
+    <div class="n-ico" title="Хадгалсан">❤️</div>
+    <div class="n-sep"></div>
+    <div class="n-ico" title="Хуваарь" onclick="go('sched')">📅</div>
+    <div class="n-ico" title="Premium" onclick="go('premium')">👑</div>
+    <div class="n-ico" title="Тохиргоо">⚙️</div>
+    <div class="nav-avatar-sm">😊</div>
+  </aside>
+
+  <!-- Feed main -->
+  <main class="feed-main">
+    <!-- Top bar -->
+    <div class="feed-topbar">
+      <div>
+        <div class="feed-h">Discover <span>💫</span></div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px">Таны хуваарьтай таарсан оюутнууд</div>
+      </div>
+      <div class="feed-top-right">
+        <div class="like-pill">
+          <span style="font-size:12px;color:var(--muted)">Like</span>
+          <div class="like-track"><div class="like-inner"></div></div>
+          <span style="font-size:12px;font-weight:700;color:var(--ink)">7/10</span>
+          <button class="upgrade-pill" onclick="go('premium')">👑 Upgrade</button>
+        </div>
+        <!-- View toggle -->
+        <div class="view-toggle">
+          <button class="vt-btn on" id="vt-swipe" onclick="setView('swipe')">🃏 Swipe</button>
+          <button class="vt-btn" id="vt-list"  onclick="setView('list')">☰ Жагсаалт</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter chips — horizontal scroll -->
+    <div class="filter-scroll">
+      <button class="f-chip on">Бүгд</button>
+      <button class="f-chip">💻 Программ</button>
+      <button class="f-chip">📊 Бизнес</button>
+      <button class="f-chip">⚖️ Хууль</button>
+      <button class="f-chip">📅 ≥5ц нийтлэг</button>
+      <button class="f-chip">3-р курс</button>
+      <button class="f-chip">🟢 Онлайн</button>
+      <button class="f-chip">🔬 Судалгаа</button>
+    </div>
+
+    <!-- ── SWIPE VIEW ── -->
+    <div id="view-swipe" class="swipe-view">
+      <div class="card-stack">
+        <!-- bg ghost cards — purely decorative -->
+        <div class="sw-back1"></div>
+        <div class="sw-back2"></div>
+
+        <!-- front card: photo + info only, NO overflow:hidden clipping -->
+        <div class="sw-front">
+          <div class="sw-photo">
+            <div class="sw-emo">👩‍💻</div>
+            <div class="sw-badge">📅 87% таарсан</div>
+            <div class="sw-online-badge">● Онлайн</div>
+          </div>
+          <div class="sw-info">
+            <div class="sw-name">Номинчимэг, 21<span class="sw-rating">⭐ 4.8</span></div>
+            <div class="sw-meta">Программ хангамж · 3-р курс · 14 нийтлэг цаг</div>
+            <div class="sw-tags">
+              <span class="sw-tag">💻 Проект</span>
+              <span class="sw-tag">📚 Судалгаа</span>
+              <span class="sw-tag">☕ Кофе</span>
+              <span class="sw-tag">🎨 Дизайн</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action buttons OUTSIDE the card — never clipped -->
+        <div class="sw-actions">
+          <button class="sa sa-pass"><div class="sa-c">✕</div><span class="sa-lbl">Pass</span></button>
+          <button class="sa sa-super"><div class="sa-c">⭐</div><span class="sa-lbl">Super</span></button>
+          <button class="sa sa-like" onclick="document.getElementById('mm').classList.add('show')"><div class="sa-c">♥</div><span class="sa-lbl">Like</span></button>
+          <button class="sa sa-boost"><div class="sa-c">⚡</div><span class="sa-lbl">Boost</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LIST VIEW ── -->
+    <div id="view-list" class="list-view">
+
+      <!-- Sort bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 2px">
+        <span style="font-size:13px;color:var(--muted)"><strong style="color:var(--ink)">1,247</strong> оюутан</span>
+        <select style="font-size:12px;font-weight:700;color:var(--ink2);border:1.5px solid var(--line);border-radius:50px;padding:6px 14px;background:var(--white);cursor:pointer;font-family:inherit">
+          <option>Хуваарийн оноо ↓</option>
+          <option>Сонирхлын оноо ↓</option>
+          <option>Онлайн эхэнд</option>
+        </select>
+      </div>
+
+      <!-- User cards -->
+      <div class="user-card">
+        <div class="user-av" style="background:linear-gradient(135deg,#FFE4D8,#F9C4A8)">👩‍💻<div class="uav-online"></div></div>
+        <div class="user-info">
+          <div class="user-name-row"><span class="uname">Номинчимэг, 21</span><span class="u-rating">⭐ 4.8</span></div>
+          <div class="u-meta">Программ хангамж · 3-р курс · 14 нийтлэг цаг</div>
+          <div class="u-tags"><span class="u-tag">💻 Проект</span><span class="u-tag">📚 Судалгаа</span><span class="u-tag">☕ Кофе</span></div>
+        </div>
+        <div class="user-right">
+          <div class="score-ring"><div class="sr-n">87%</div><div class="sr-l">таарсан</div></div>
+          <button class="msg-btn" onclick="event.stopPropagation();this.textContent='✓ Илгээсэн';this.classList.add('sent')">💬 Мессеж</button>
+        </div>
+      </div>
+
+      <div class="user-card">
+        <div class="user-av" style="background:linear-gradient(135deg,#E4EAF4,#C0CCE0)">👩‍🎨<div class="uav-online"></div></div>
+        <div class="user-info">
+          <div class="user-name-row"><span class="uname">Энхтуяа, 19</span></div>
+          <div class="u-meta">Дизайн · 1-р курс · 11 нийтлэг цаг</div>
+          <div class="u-tags"><span class="u-tag">🎨 Дизайн</span><span class="u-tag">☕ Амрах</span></div>
+        </div>
+        <div class="user-right">
+          <div class="score-ring"><div class="sr-n">79%</div><div class="sr-l">таарсан</div></div>
+          <button class="msg-btn" onclick="event.stopPropagation();this.textContent='✓ Илгээсэн';this.classList.add('sent')">💬 Мессеж</button>
+        </div>
+      </div>
+
+      <div class="user-card">
+        <div class="user-av" style="background:linear-gradient(135deg,#E4F4E8,#C0D8C4)">🧑‍🔬</div>
+        <div class="user-info">
+          <div class="user-name-row"><span class="uname">Батмөнх, 20</span></div>
+          <div class="u-meta">Эдийн засаг · 2-р курс · 9 нийтлэг цаг</div>
+          <div class="u-tags"><span class="u-tag">🔬 Судалгаа</span><span class="u-tag">📖 Уншлага</span></div>
+        </div>
+        <div class="user-right">
+          <div class="score-ring" style="border-color:var(--muted);background:var(--surface)"><div class="sr-n" style="color:var(--muted)">72%</div><div class="sr-l" style="color:var(--muted)">таарсан</div></div>
+          <button class="msg-btn" onclick="event.stopPropagation();this.textContent='✓ Илгээсэн';this.classList.add('sent')">💬 Мессеж</button>
+        </div>
+      </div>
+
+      <div class="user-card">
+        <div class="user-av" style="background:linear-gradient(135deg,#F4E8F4,#D4C0D4)">🧑‍💼</div>
+        <div class="user-info">
+          <div class="user-name-row"><span class="uname">Тэмүүлэн, 22</span></div>
+          <div class="u-meta">Бизнес · 4-р курс · 7 нийтлэг цаг</div>
+          <div class="u-tags"><span class="u-tag">💼 Проект</span><span class="u-tag">🗣️ Хэлний практик</span></div>
+        </div>
+        <div class="user-right">
+          <div class="score-ring" style="border-color:var(--muted);background:var(--surface)"><div class="sr-n" style="color:var(--muted)">65%</div><div class="sr-l" style="color:var(--muted)">таарсан</div></div>
+          <button class="msg-btn" onclick="event.stopPropagation();this.textContent='✓ Илгээсэн';this.classList.add('sent')">💬 Мессеж</button>
+        </div>
+      </div>
+
+      <!-- Premium blur row -->
+      <div class="user-card" style="position:relative;opacity:.65">
+        <div class="user-av" style="background:var(--line);filter:blur(5px)">👤</div>
+        <div class="user-info" style="filter:blur(5px)">
+          <div class="user-name-row"><span class="uname">••••••••</span></div>
+          <div class="u-meta">Математик · 2-р курс</div>
+        </div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;padding-right:16px">
+          <button onclick="go('premium')" style="padding:8px 18px;border-radius:50px;background:var(--gold-bg);border:1.5px solid #FFE082;color:#A07800;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit">👑 Upgrade хийж харах</button>
+        </div>
+      </div>
+
+      <div style="padding:20px 0;text-align:center">
+        <button style="padding:11px 28px;border-radius:50px;border:1.5px solid var(--line);background:var(--white);font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit">Дахин 20 харах</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Right panel -->
+  <aside class="right-col">
+    <div style="margin-bottom:24px">
+      <div class="rp-title">Миний хуваарь</div>
+      <div class="mini-sched">
+        <div class="ms-days">
+          <div class="ms-d">Да</div><div class="ms-d">Мя</div><div class="ms-d">Лх</div><div class="ms-d">Пү</div><div class="ms-d">Ба</div><div class="ms-d">Бя</div><div class="ms-d">Ня</div>
+        </div>
+        <div class="ms-slots">
+          <div class="ms-col"><div class="ms-slot b"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot b"></div><div class="ms-slot f"></div><div class="ms-slot f"></div></div>
+          <div class="ms-col"><div class="ms-slot f"></div><div class="ms-slot b"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot b"></div><div class="ms-slot f"></div></div>
+          <div class="ms-col"><div class="ms-slot b"></div><div class="ms-slot b"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div></div>
+          <div class="ms-col"><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot b"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div></div>
+          <div class="ms-col"><div class="ms-slot b"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot b"></div><div class="ms-slot f"></div><div class="ms-slot f"></div></div>
+          <div class="ms-col"><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div></div>
+          <div class="ms-col"><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div><div class="ms-slot f"></div></div>
+        </div>
+        <button class="ms-edit" onclick="go('sched')">✏️ Хуваарь засах</button>
+      </div>
+    </div>
+    <div class="rp-title">Сүүлийн холбоосууд</div>
+    <div class="match-list">
+      <div class="mi" onclick="go('chat')"><div class="mi-av">👩‍🎨<div class="mi-dot"></div></div><div><div class="mi-name">Энхтуяа</div><div class="mi-pre">Маргааш цагтай уу?</div></div><div class="mi-unread">2</div></div>
+      <div class="mi"><div class="mi-av">🧑‍🔬</div><div><div class="mi-name">Батмөнх</div><div class="mi-pre">Сайн байна уу 👋</div></div><div class="mi-time">1ц</div></div>
+      <div class="mi"><div class="mi-av">🧑‍💼</div><div><div class="mi-name">Тэмүүлэн</div><div class="mi-pre">React project?</div></div><div class="mi-time">3ц</div></div>
+    </div>
+  </aside>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  06 · SCHEDULE  ★ DRAG-SELECT
+══════════════════════════════════════════════ -->
+<div id="sched" class="sc">
+<div style="background:var(--white);border-bottom:1px solid var(--line);padding:12px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:44px;z-index:50">
+  <button onclick="go('discover')" style="padding:8px 16px;border-radius:50px;border:1.5px solid var(--line);background:var(--white);font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit;transition:.2s" onmouseover="this.style.borderColor='var(--ink)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--muted)'">← Буцах</button>
+  <span style="font-family:'Fraunces',serif;font-size:18px;font-weight:700">Хуваарь тохируулах</span>
+  <!-- mode toggle -->
+  <div class="sched-mode" style="margin-left:auto">
+    <button class="sm-btn on" id="sm-free" onclick="setDragMode('free')">🟠 Чөлөөт</button>
+    <button class="sm-btn" id="sm-busy" onclick="setDragMode('busy')">🔵 Хичээл</button>
+    <button class="sm-btn" id="sm-clear" onclick="setDragMode('clear')">✕ Арилгах</button>
+  </div>
+</div>
+
+<div class="sched-page">
+  <div class="sched-topbar">
+    <div>
+      <div class="sched-h">Долоо хоногийн хуваарь</div>
+      <div class="sched-sub">Дээрх горим сонгоод, нүдийг дарж эсвэл чирж хурдан тэмдэглэ</div>
+    </div>
+  </div>
+
+  <!-- instruction strip -->
+  <div class="sched-hint">
+    <div class="sh-item"><div class="sh-swatch sh-free"></div>Чөлөөт цаг — оноо нэмнэ</div>
+    <div class="sh-divider"></div>
+    <div class="sh-item"><div class="sh-swatch sh-busy"></div>Хичээлтэй цаг</div>
+    <div class="sh-divider"></div>
+    <div class="sh-item"><div class="sh-swatch sh-empty"></div>Тэмдэглэгдээгүй</div>
+    <div class="sh-divider"></div>
+    <span style="font-size:13px;color:var(--ink2)">💡 Горим сонгоод чирж тэмдэглэ — хурдан!</span>
+  </div>
+
+  <div class="sched-wrap">
+    <!-- header row -->
+    <div class="sg-head">
+      <div class="sg-corner"></div>
+      <div class="sg-day today">ДА</div>
+      <div class="sg-day">МЯ</div>
+      <div class="sg-day">ЛХ</div>
+      <div class="sg-day">ПҮ</div>
+      <div class="sg-day">БА</div>
+      <div class="sg-day">БЯ</div>
+      <div class="sg-day">НЯ</div>
+    </div>
+    <!-- body rows (built by JS) -->
+    <div class="sg-body" id="sg-body"></div>
+  </div>
+
+  <div class="sched-stats">
+    <div class="ss-card"><div class="ss-n coral" id="cnt-free">24</div><div class="ss-l">Чөлөөт цаг</div></div>
+    <div class="ss-card"><div class="ss-n sky"   id="cnt-busy">18</div><div class="ss-l">Хичээлтэй цаг</div></div>
+    <div class="ss-card"><div class="ss-n mint">87%</div><div class="ss-l">Дундаж Match score</div></div>
+  </div>
+  <div class="sched-btns">
+    <button class="btn-save" onclick="go('discover')">✓ Хадгалаад үргэлжлүүлэх</button>
+    <button class="btn-clear" onclick="clearAll()">🔄 Бүгдийг арилгах</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  07 · CHAT — Discord-style community + DM
+══════════════════════════════════════════════ -->
+<div id="chat" class="sc">
+<div class="chat-shell">
+
+  <!-- ── LEFT SIDEBAR ── -->
+  <div class="chat-sidebar">
+    <div class="cs-header">
+      <div class="cs-app-name">Num<span>Connect</span> 💬</div>
+      <div class="cs-search">🔍 Хайх...</div>
+    </div>
+
+    <div class="cs-body">
+      <!-- Community channels -->
+      <div class="cs-section">
+        Нийтийн channel
+        <span class="cs-section-add" title="Channel нэмэх">＋</span>
+      </div>
+
+      <div class="ch-item on" onclick="openChannel('general')">
+        <span class="ch-ico">#</span>
+        <span class="ch-name">general</span>
+        <span class="ch-online">● 124</span>
+      </div>
+      <div class="ch-item" onclick="openChannel('study-room')">
+        <span class="ch-ico">#</span>
+        <span class="ch-name">study-room</span>
+        <span class="ch-badge">12</span>
+      </div>
+      <div class="ch-item" onclick="openChannel('project-ideas')">
+        <span class="ch-ico">#</span>
+        <span class="ch-name">project-ideas</span>
+      </div>
+      <div class="ch-item" onclick="openChannel('coffee-chat')">
+        <span class="ch-ico">#</span>
+        <span class="ch-name">coffee-chat ☕</span>
+        <span class="ch-badge">3</span>
+      </div>
+      <div class="ch-item" onclick="openChannel('off-topic')">
+        <span class="ch-ico">#</span>
+        <span class="ch-name">off-topic</span>
+      </div>
+      <div class="ch-item" onclick="openChannel('announcements')">
+        <span class="ch-ico">📢</span>
+        <span class="ch-name">announcements</span>
+      </div>
+
+      <!-- Private DMs -->
+      <div class="cs-section" style="margin-top:8px">
+        Хувийн мессеж
+        <span class="cs-section-add" title="DM эхлүүлэх">＋</span>
+      </div>
+
+      <div class="dm-item" onclick="openDM('enkhtuyaa')">
+        <div class="dm-av" style="background:linear-gradient(135deg,#FFD4D4,#FF9A9A)">👩‍🎨<div class="dm-dot"></div></div>
+        <span class="dm-name">Энхтуяа</span>
+        <span class="dm-unread">2</span>
+      </div>
+      <div class="dm-item" onclick="openDM('batmunkh')">
+        <div class="dm-av" style="background:linear-gradient(135deg,#D4E4D4,#90B490)">🧑‍🔬<div class="dm-dot"></div></div>
+        <span class="dm-name">Батмөнх</span>
+      </div>
+      <div class="dm-item" onclick="openDM('temuulen')">
+        <div class="dm-av" style="background:linear-gradient(135deg,#D4D4F4,#9090D0)">🧑‍💼</div>
+        <span class="dm-name">Тэмүүлэн</span>
+      </div>
+      <div class="dm-item" onclick="openDM('oyuntsetseg')">
+        <div class="dm-av" style="background:linear-gradient(135deg,#F4E4D4,#D0A080)">👩‍💻</div>
+        <span class="dm-name">Оюунцэцэг</span>
+      </div>
+      <div class="dm-item" onclick="openDM('saraa')">
+        <div class="dm-av" style="background:linear-gradient(135deg,#F4D4F4,#C090C0)">👩‍🏫<div class="dm-dot"></div></div>
+        <span class="dm-name">Сарантуяа</span>
+      </div>
+    </div>
+
+    <!-- Bottom user bar -->
+    <div class="cs-user-bar">
+      <div class="cub-av">😊<div class="cub-dot"></div></div>
+      <div>
+        <div class="cub-name">Мягмарсүрэн</div>
+        <div class="cub-status">● Онлайн</div>
+      </div>
+      <div class="cub-actions">
+        <button class="cub-btn" title="Микрофон">🎙️</button>
+        <button class="cub-btn" title="Тохиргоо">⚙️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAIN CHAT AREA ── -->
+  <div class="chat-main" id="chat-main">
+    <!-- Channel view (default) -->
+    <div id="view-channel">
+      <!-- Topbar -->
+      <div class="chat-topbar">
+        <span class="ct-icon">#</span>
+        <span class="ct-name">general</span>
+        <div class="ct-divider"></div>
+        <span class="ct-desc">МУИС-Д бүх оюутнуудын нийтийн чат</span>
+        <div class="ct-actions">
+          <button class="ct-act" title="Гишүүд">👥</button>
+          <button class="ct-act" title="Хайх">🔍</button>
+          <button class="ct-act" title="Мэдэгдэл">🔔</button>
+        </div>
+      </div>
+
+      <!-- Online members strip -->
+      <div class="online-strip">
+        <div class="os-green-dot"></div>
+        <span style="font-weight:700;color:var(--ink)">124</span> онлайн —
+        <div class="os-av" style="background:linear-gradient(135deg,#FFE4D8,#F9C4A8)">👩‍💻</div>
+        <div class="os-av" style="background:linear-gradient(135deg,#E4EAF4,#C0CCE0)">👩‍🎨</div>
+        <div class="os-av" style="background:linear-gradient(135deg,#E4F4E8,#C0D8C4)">🧑‍🔬</div>
+        <div class="os-av" style="background:linear-gradient(135deg,#E8F4FF,#B4D4F0)">🧑‍💻</div>
+        <div class="os-av" style="background:linear-gradient(135deg,#F4E8F4,#D4C0D4)">👩‍🏫</div>
+        <div class="os-av" style="background:var(--line);color:var(--muted);font-size:10px;font-weight:700">+119</div>
+      </div>
+
+      <!-- Messages -->
+      <div class="msgs" id="general-msgs">
+
+        <!-- Welcome banner -->
+        <div class="ch-welcome">
+          <div class="ch-welcome-ico"># 👋</div>
+          <div class="ch-welcome-h">#general channel-д тавтай морил!</div>
+          <div class="ch-welcome-p">Энэ бол МУИС-Д бүх оюутнуудын нийтийн чат. Танилцаж, асуулт тавьж, хэн нэгэнтэй холбогдоорой.</div>
+        </div>
+
+        <div class="date-sep">Өнөөдөр, 2025 оны 6-р сарын 1</div>
+
+        <!-- Message group 1: Сарантуяа -->
+        <div class="cmsg">
+          <div class="cmsg-av" style="background:linear-gradient(135deg,#FFF0E4,#F9D8B8)">👩‍🏫</div>
+          <div class="cmsg-body">
+            <div class="cmsg-header">
+              <span class="cmsg-name">Сарантуяа</span>
+              <span class="cmsg-badge cmsg-badge-mod">Программ · 3-р курс</span>
+              <span class="cmsg-time">09:14</span>
+            </div>
+            <div class="cmsg-text">Сайн байна уу бүгд! 👋 React project хийх хамтрагч хайж байна. Энэ долоо хоногт Лхагва, Пүрэв чөлөөтэй. Сонирхогч байвал ping хийгээрэй</div>
+            <div class="cmsg-reactions">
+              <span class="reaction active">👋 <span class="reaction-count">12</span></span>
+              <span class="reaction">🤝 <span class="reaction-count">5</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="cmsg-cont">
+          <div class="cmsg-cont-time">09:15</div>
+          <div class="cmsg-cont-text">TypeScript + Next.js ашиглаж байгаа, туршлага шаардахгүй — хамт суралцацгаая 😊</div>
+        </div>
+
+        <!-- Батмөнх -->
+        <div class="cmsg">
+          <div class="cmsg-av" style="background:linear-gradient(135deg,#E4F4E8,#C0D8C4)">🧑‍🔬</div>
+          <div class="cmsg-body">
+            <div class="cmsg-header">
+              <span class="cmsg-name">Батмөнх</span>
+              <span class="cmsg-badge cmsg-badge-free">Эдийн засаг · 2-р курс</span>
+              <span class="cmsg-time">09:22</span>
+            </div>
+            <div class="cmsg-text">@Сарантуяа сонирхолтой байна! Би Python мэддэг ч JavaScript бага мэднэ. TypeScript-д тусалж болох уу? 🙏</div>
+          </div>
+        </div>
+
+        <!-- Сарантуяа continued -->
+        <div class="cmsg-cont">
+          <div class="cmsg-cont-time">09:25</div>
+          <div class="cmsg-cont-text" style="color:var(--coral)">@Батмөнх болно! DM ил 📩</div>
+        </div>
+
+        <!-- Номинчимэг -->
+        <div class="cmsg">
+          <div class="cmsg-av" style="background:linear-gradient(135deg,#FFE4D8,#F9C4A8)">👩‍💻</div>
+          <div class="cmsg-body">
+            <div class="cmsg-header">
+              <span class="cmsg-name">Номинчимэг</span>
+              <span class="cmsg-badge cmsg-badge-mod">Программ · 3-р курс</span>
+              <span class="cmsg-time">10:05</span>
+            </div>
+            <div class="cmsg-text">Өнөөдөр D корпусын 3-р давхарт хамтран суралцах бүлэг нэгдэнэ 14:00 цагт. Алгоритм хичээлийн даалгавар хийнэ. Нэгдэхийг хүсэгч байна уу? 📚</div>
+            <div class="cmsg-reactions">
+              <span class="reaction active">✋ <span class="reaction-count">8</span></span>
+              <span class="reaction">📚 <span class="reaction-count">6</span></span>
+              <span class="reaction">❤️ <span class="reaction-count">3</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Энхтуяа -->
+        <div class="cmsg">
+          <div class="cmsg-av" style="background:linear-gradient(135deg,#E4EAF4,#C0CCE0)">👩‍🎨</div>
+          <div class="cmsg-body">
+            <div class="cmsg-header">
+              <span class="cmsg-name">Энхтуяа</span>
+              <span class="cmsg-badge cmsg-badge-free">Дизайн · 1-р курс</span>
+              <span class="cmsg-time">10:18</span>
+            </div>
+            <div class="cmsg-text">Figma template хийх хүн байна уу? CV дизайн хийх гэж байгаа ч яаж эхлэхээ мэдэхгүй байна 😅</div>
+          </div>
+        </div>
+
+        <!-- Мягмарсүрэн (ME) -->
+        <div class="cmsg">
+          <div class="cmsg-av" style="background:linear-gradient(135deg,var(--coral),var(--coral2))">😊</div>
+          <div class="cmsg-body">
+            <div class="cmsg-header">
+              <span class="cmsg-name me-name">Мягмарсүрэн (Та)</span>
+              <span class="cmsg-badge cmsg-badge-mod">Программ · 3-р курс</span>
+              <span class="cmsg-time">10:31</span>
+            </div>
+            <div class="cmsg-text">@Энхтуяа надад Figma-ийн template байна, хуваалцъя. Мөн CV дизайны tutorial сайн байдаг: figma.com/community дотор CV гэж хайгаарай 👍</div>
+            <div class="cmsg-reactions">
+              <span class="reaction">🙏 <span class="reaction-count">2</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Энхтуяа reply -->
+        <div class="cmsg">
+          <div class="cmsg-av" style="background:linear-gradient(135deg,#E4EAF4,#C0CCE0)">👩‍🎨</div>
+          <div class="cmsg-body">
+            <div class="cmsg-header">
+              <span class="cmsg-name">Энхтуяа</span>
+              <span class="cmsg-time">10:33</span>
+            </div>
+            <div class="cmsg-text">@Мягмарсүрэн их баярлалаа!! 🙏✨</div>
+          </div>
+        </div>
+
+        <!-- System: join -->
+        <div class="sys-msg">🎉 Сайнбаяр #general-д нэгдлээ</div>
+
+        <!-- Сайнбаяр -->
+        <div class="cmsg">
+          <div class="cmsg-av" style="background:linear-gradient(135deg,#E8FFF4,#B4F0D0)">🧑‍💻</div>
+          <div class="cmsg-body">
+            <div class="cmsg-header">
+              <span class="cmsg-name">Сайнбаяр</span>
+              <span class="cmsg-badge cmsg-badge-mod">МТ · 5-р курс</span>
+              <span class="cmsg-time">11:47</span>
+            </div>
+            <div class="cmsg-text">Сайн байна уу! Cloud computing-ийн тухай ярилцах хүн байна уу? AWS эсвэл GCP туршиж үзсэн хүн байвал мэдэлцье 🙌</div>
+            <div class="cmsg-reactions">
+              <span class="reaction">☁️ <span class="reaction-count">4</span></span>
+              <span class="reaction active">🙋 <span class="reaction-count">3</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Түвшинбаяр -->
+        <div class="cmsg">
+          <div class="cmsg-av" style="background:linear-gradient(135deg,#E8FFEC,#A8E4B4)">🧑‍💻</div>
+          <div class="cmsg-body">
+            <div class="cmsg-header">
+              <span class="cmsg-name">Түвшинбаяр</span>
+              <span class="cmsg-badge cmsg-badge-mod">МТ · 3-р курс</span>
+              <span class="cmsg-time">11:52</span>
+            </div>
+            <div class="cmsg-text">@Сайнбаяр AWS-ийн EC2 болон S3 ашиглаж байна, асуугаарай 😄 Ирэх долоо хоногт DevOps meetup хийх санаа бий</div>
+          </div>
+        </div>
+
+        <div class="date-sep">Одоо</div>
+
+        <!-- Мягмарсүрэн send area placeholder -->
+        <div id="typing-indicator" style="display:none;padding:4px 0;font-size:12px;color:var(--muted)">
+          <em>Энхтуяа бичиж байна...</em>
+        </div>
+
+      </div><!-- /msgs -->
+
+      <!-- Input -->
+      <div class="chat-input-area">
+        <div class="chat-input-box">
+          <button class="chat-inp-icon">＋</button>
+          <input class="chat-inp" id="ch-inp" placeholder="#general-д бичих..." onkeydown="sendCommunityMsg(event)">
+          <button class="chat-inp-icon">😊</button>
+          <button class="chat-inp-icon">🎁</button>
+          <button class="chat-send" id="ch-send" onclick="sendCommunityMsg({key:'Enter'})">↑</button>
+        </div>
+      </div>
+    </div><!-- /view-channel -->
+
+    <!-- DM view (hidden by default) -->
+    <div id="view-dm" style="display:none;flex-direction:column;height:100%">
+      <div class="chat-topbar">
+        <span class="ct-icon" id="dm-ico">👩‍🎨</span>
+        <span class="ct-name" id="dm-name">Энхтуяа</span>
+        <div class="ct-divider"></div>
+        <span class="ct-desc" id="dm-desc">Дизайн · 1-р курс · 79% таарсан</span>
+        <div class="ct-actions">
+          <button class="ct-act">📅</button>
+          <button class="ct-act">👤</button>
+          <button class="ct-act">🔍</button>
+        </div>
+      </div>
+      <!-- Nийтлэг цаг -->
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 18px;background:var(--peach);border-bottom:1px solid rgba(255,92,92,.15);font-size:12px;color:var(--ink2)">
+        📅 Нийтлэг цаг: <strong style="color:var(--coral)" id="dm-common">Лхагва 14:00–16:00</strong>
+      </div>
+      <div class="msgs" id="dm-msgs">
+        <div class="date-sep">Өнөөдөр</div>
+        <div class="msg-row">
+          <div class="msg-av">👩‍🎨</div>
+          <div><div class="bubble t">Сайн байна уу! Хуваарийг харвал нийтлэг цаг их байна 😊</div><div class="msg-time">14:12</div></div>
+        </div>
+        <div class="msg-row me">
+          <div class="msg-av" style="background:linear-gradient(135deg,var(--coral),var(--coral2))">😊</div>
+          <div><div class="bubble m">Сайн уу! Лхагва 14 цагт кофе уух уу? ☕</div><div class="msg-time">14:15</div></div>
+        </div>
+        <div class="msg-row">
+          <div class="msg-av">👩‍🎨</div>
+          <div><div class="bubble t">Сайн санаа! Bolar cafe мэддэг үү?</div><div class="msg-time">14:18</div></div>
+        </div>
+        <div class="msg-row me">
+          <div class="msg-av" style="background:linear-gradient(135deg,var(--coral),var(--coral2))">😊</div>
+          <div><div class="bubble m">Мэднэ! Лхагва 14:00 цагт уулзацгаая 🙌</div><div class="msg-time">14:25</div></div>
+        </div>
+        <div class="msg-row">
+          <div class="msg-av">👩‍🎨</div>
+          <div><div class="bubble t">Маргааш portfolio-д тусалж чадах уу? 😅</div><div class="msg-time">14:32</div></div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-box">
+          <button class="chat-inp-icon">＋</button>
+          <input class="chat-inp" id="dm-inp" placeholder="Мессеж бичих..." onkeydown="sendDMMsg(event)">
+          <button class="chat-inp-icon">😊</button>
+          <button class="chat-send" onclick="sendDMMsg({key:'Enter'})">↑</button>
+        </div>
+      </div>
+    </div><!-- /view-dm -->
+
+  </div><!-- /chat-main -->
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  08 · PREMIUM (same)
+══════════════════════════════════════════════ -->
+<div id="premium" class="sc">
+<div class="prem-page">
+  <div class="prem-badge">👑 NumConnect Premium</div>
+  <div class="prem-title">Хязгааргүй<br><em>боломж</em> нээ</div>
+  <div class="prem-sub">Хязгааргүй мессеж, blur арилсан профайл, нийтлэг цагийн дэлгэрэнгүй харагдана.</div>
+  <div class="price-row">
+    <div class="pc">
+      <div class="pc-plan">Сарын багц</div><div class="pc-amt">₮9,900</div><div class="pc-per">/ сар тутам</div>
+      <ul class="pc-feat">
+        <li><span class="pf-yes">✓</span>Хязгааргүй мессеж</li>
+        <li><span class="pf-yes">✓</span>Бүрэн профайл харах</li>
+        <li><span class="pf-yes">✓</span>Нийтлэг цаг дэлгэрэнгүй</li>
+        <li><span class="pf-yes">✓</span>Super Like ×3/өдөр</li>
+        <li><span class="pf-no">✗</span><span>Spotlight</span></li>
+      </ul>
+      <button class="pc-btn pc-btn-out">Сонгох</button>
+    </div>
+    <div class="pc feat">
+      <div class="pc-pop">⭐ ХАМГИЙН АШИГТАЙ</div>
+      <div class="pc-plan" style="color:var(--coral)">Жилийн багц</div><div class="pc-amt" style="color:var(--coral)">₮79,900</div>
+      <div class="pc-per">/ жил · <span style="background:var(--mint-bg);color:var(--mint);font-size:11px;font-weight:800;padding:2px 8px;border-radius:50px">33% хямд</span></div>
+      <ul class="pc-feat">
+        <li><span class="pf-yes">✓</span>Хязгааргүй мессеж</li>
+        <li><span class="pf-yes">✓</span>Бүрэн профайл харах</li>
+        <li><span class="pf-yes">✓</span>Нийтлэг цаг дэлгэрэнгүй</li>
+        <li><span class="pf-yes">✓</span>Super Like ×3/өдөр</li>
+        <li><span class="pf-yes">✓</span>Spotlight (7 хоногт 1)</li>
+      </ul>
+      <button class="pc-btn pc-btn-fill">Жилийн багц сонгох →</button>
+    </div>
+  </div>
+  <div class="prem-note">🔒 QPay-аар аюулгүй төлбөр · Хэдийд ч цуцлах боломжтой</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  09 · ADMIN (same)
+══════════════════════════════════════════════ -->
+<div id="admin" class="sc">
+<div class="admin-page">
+  <div class="adm-head">
+    <div>
+      <div style="font-size:12px;font-weight:800;color:var(--coral);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px">⚙️ Admin Panel</div>
+      <div class="adm-title">Dashboard</div>
+      <div class="adm-sub">NumConnect системийн ерөнхий тойм</div>
+    </div>
+    <div class="adm-datebadge">📅 2025-06-01 · Лхагва</div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-ico ki-a">👥</div><div class="kpi-l">Нийт хэрэглэгч</div><div class="kpi-n kn-a">1,247</div><div class="kpi-ch">↑ +48 энэ долоо хоногт</div></div>
+    <div class="kpi"><div class="kpi-ico ki-b">💬</div><div class="kpi-l">Нийт чат</div><div class="kpi-n kn-b">342</div><div class="kpi-ch">↑ Хариу rate 40%</div></div>
+    <div class="kpi"><div class="kpi-ico ki-c">👑</div><div class="kpi-l">Premium захиалга</div><div class="kpi-n kn-c">89</div><div class="kpi-ch">↑ Conversion 7.1%</div></div>
+    <div class="kpi"><div class="kpi-ico ki-d">⚡</div><div class="kpi-l">Өдрийн идэвхтэй (DAU)</div><div class="kpi-n kn-d">124</div><div class="kpi-ch neg">↓ −8 өчигдрөөс</div></div>
+  </div>
+  <div class="adm-grid">
+    <div>
+      <div class="adm-card" style="margin-bottom:18px">
+        <div class="adm-ch"><div class="adm-ct">📈 DAU — Сүүлийн 7 хоног</div><div style="font-size:12px;color:var(--muted);font-weight:600">Энэ долоо хоног</div></div>
+        <div class="chart-area">
+          <div class="cb2" style="height:55%"><div class="cb2-val">98</div></div>
+          <div class="cb2" style="height:72%"><div class="cb2-val">128</div></div>
+          <div class="cb2" style="height:48%"><div class="cb2-val">86</div></div>
+          <div class="cb2" style="height:88%"><div class="cb2-val">156</div></div>
+          <div class="cb2" style="height:65%"><div class="cb2-val">116</div></div>
+          <div class="cb2" style="height:95%"><div class="cb2-val">169</div></div>
+          <div class="cb2" style="height:70%"><div class="cb2-val">124</div></div>
+        </div>
+        <div class="chart-days"><div class="cd">Да</div><div class="cd">Мя</div><div class="cd">Лх</div><div class="cd">Пү</div><div class="cd">Ба</div><div class="cd">Бя</div><div class="cd">Ня</div></div>
+      </div>
+      <div class="adm-card">
+        <div class="adm-ch">
+          <div class="adm-ct">👥 Хэрэглэгчид</div>
+          <div style="display:flex;gap:8px"><input style="background:var(--surface);border:1.5px solid var(--line);border-radius:50px;padding:7px 14px;font-size:12px;font-family:inherit;color:var(--ink);outline:none;width:140px" placeholder="🔍 Хайх..."><select style="background:var(--surface);border:1.5px solid var(--line);border-radius:50px;padding:7px 12px;font-size:12px;font-family:inherit;color:var(--muted);outline:none;cursor:pointer"><option>Бүгд</option><option>Premium</option><option>Free</option></select></div>
+        </div>
+        <table class="adm-table">
+          <thead><tr><th class="adm-th">Хэрэглэгч</th><th class="adm-th">Мэргэжил</th><th class="adm-th">Дамжаа</th><th class="adm-th">Төрөл</th><th class="adm-th">Статус</th><th class="adm-th">Үйлдэл</th></tr></thead>
+          <tbody>
+            <tr class="adm-tr"><td class="adm-td"><div class="uc"><div class="ua">👩‍💻</div><div><div class="un">Номинчимэг</div><div class="ue"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="774547354639223a474743453719021a59121302591a19">[email&#160;protected]</a></div></div></div></td><td class="adm-td">Программ хангамж</td><td class="adm-td">3-р курс</td><td class="adm-td"><span class="badge bg-prem">👑 Premium</span></td><td class="adm-td"><span class="badge bg-ok">Идэвхтэй</span></td><td class="adm-td"><button class="adm-act aa-view">Харах</button><button class="adm-act aa-block">Блок</button></td></tr>
+            <tr class="adm-tr"><td class="adm-td"><div class="uc"><div class="ua">🧑‍🔬</div><div><div class="un">Батмөнх</div><div class="ue"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c1f3f083f08f948cf1f1f0f881afb4acefa4a5b4efacaf">[email&#160;protected]</a></div></div></div></td><td class="adm-td">Эдийн засаг</td><td class="adm-td">2-р курс</td><td class="adm-td"><span class="badge bg-free">Free</span></td><td class="adm-td"><span class="badge bg-ok">Идэвхтэй</span></td><td class="adm-td"><button class="adm-act aa-view">Харах</button><button class="adm-act aa-block">Блок</button></td></tr>
+            <tr class="adm-tr"><td class="adm-td"><div class="uc"><div class="ua">👩‍🎨</div><div><div class="un">Энхтуяа</div><div class="ue"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e9dbdbabd8a7bca4d9d9d1dea9879c84c78c8d9cc78487">[email&#160;protected]</a></div></div></div></td><td class="adm-td">Дизайн</td><td class="adm-td">1-р курс</td><td class="adm-td"><span class="badge bg-free">Free</span></td><td class="adm-td"><span class="badge bg-bad">Тайлагдсан</span></td><td class="adm-td"><button class="adm-act aa-view">Харах</button><button class="adm-act aa-block">Блок</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="adm-card" style="margin-bottom:18px">
+        <div class="adm-ch"><div class="adm-ct">🚨 Гомдлууд</div><span class="badge bg-bad">3 нээлттэй</span></div>
+        <div class="report-list">
+          <div class="rep-item"><div class="rep-ico">⚠️</div><div><div class="rep-t">Зохисгүй зураг</div><div class="rep-s">user#0087 → user#0112 · 2ц өмнө</div></div><div class="rep-st"><span class="badge bg-bad">Нээлттэй</span></div></div>
+          <div class="rep-item"><div class="rep-ico">🔇</div><div><div class="rep-t">Spam мессеж</div><div class="rep-s">user#0034 → user#0056 · 5ц өмнө</div></div><div class="rep-st"><span class="badge bg-bad">Нээлттэй</span></div></div>
+          <div class="rep-item"><div class="rep-ico">✅</div><div><div class="rep-t">Буруу мэдээлэл</div><div class="rep-s">user#0091 → user#0023 · Өчигдөр</div></div><div class="rep-st"><span class="badge bg-ok">Шийдвэрлэсэн</span></div></div>
+        </div>
+      </div>
+      <div class="adm-card">
+        <div class="adm-ch"><div class="adm-ct">📊 Гол үзүүлэлтүүд</div></div>
+        <div class="quick-stats">
+          <div class="qs-row"><div class="qs-l">Дундаж Match score</div><div class="qs-n qs-a">71%</div></div>
+          <div class="qs-row"><div class="qs-l">Чат хариу rate</div><div class="qs-n qs-b">40%</div></div>
+          <div class="qs-row"><div class="qs-l">Premium conversion</div><div class="qs-n qs-c">7.1%</div></div>
+          <div class="qs-row"><div class="qs-l">Дундаж үнэлгэлт</div><div class="qs-n qs-d">4.3 ★</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── Screen switcher ─────────────────────────────── */
+function go(id){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(b=>b.classList.remove('on'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('on');
+  document.querySelectorAll('.nt').forEach(b=>{
+    if(b.getAttribute('onclick')?.includes(`'${id}'`)) b.classList.add('on');
+  });
+  window.scrollTo(0,0);
+}
+
+/* ── Tag / year toggles ──────────────────────────── */
+document.querySelectorAll('.tag,.yr-pill').forEach(el=>{
+  el.addEventListener('click',function(){this.classList.toggle('on')});
+});
+
+/* ── Filter chips ────────────────────────────────── */
+document.querySelectorAll('.f-chip').forEach(c=>{
+  c.addEventListener('click',function(){
+    document.querySelectorAll('.f-chip').forEach(x=>x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+
+/* ── View toggle (swipe / list) ──────────────────── */
+function setView(mode){
+  document.getElementById('vt-swipe').classList.toggle('on', mode==='swipe');
+  document.getElementById('vt-list').classList.toggle('on',  mode==='list');
+  document.getElementById('view-swipe').style.display = mode==='swipe' ? 'flex' : 'none';
+  const lv = document.getElementById('view-list');
+  lv.style.display = mode==='list' ? 'flex' : 'none';
+}
+
+/* ── Schedule: drag-select mode ─────────────────── */
+let dragMode = 'free'; // 'free' | 'busy' | 'clear'
+let isDragging = false;
+
+function setDragMode(m){
+  dragMode = m;
+  ['free','busy','clear'].forEach(x=>{
+    document.getElementById('sm-'+x)?.classList.toggle('on', x===m);
+  });
+}
+
+const HOURS = ['08','09','10','11','12','13','14','15','16','17','18','19','20','21'];
+const PAT = [
+  ['b','','b','','f','f',''],['b','','b','','f','f',''],
+  ['','b','','b','f','',''],['','b','','b','f','',''],
+  ['f','f','f','f','f','f','f'],['f','f','f','f','f','f','f'],
+  ['b','f','b','f','f','f',''],['b','f','b','f','f','f',''],
+  ['','','f','','f','f',''],['','','f','','f','f',''],
+  ['f','','','f','','',''],['f','','','f','','',''],
+  ['','','','','','',''],['','','','','','',''],
+];
+
+const sgBody = document.getElementById('sg-body');
+if(sgBody){
+  HOURS.forEach((h,i)=>{
+    const row = document.createElement('div');
+    row.className = 'sg-row';
+
+    const th = document.createElement('div');
+    th.className = 'sg-time';
+    th.textContent = h+':00';
+    row.appendChild(th);
+
+    for(let d=0;d<7;d++){
+      const cell = document.createElement('div');
+      cell.className = 'sg-cell' + (PAT[i][d] ? ' '+PAT[i][d] : '');
+      cell.dataset.row = i;
+      cell.dataset.col = d;
+
+      cell.addEventListener('mousedown', e=>{
+        isDragging = true;
+        applyCell(cell);
+        e.preventDefault();
+      });
+      cell.addEventListener('mouseover', ()=>{
+        if(isDragging) applyCell(cell);
+      });
+      cell.addEventListener('touchstart', e=>{
+        isDragging = true;
+        applyCell(cell);
+      }, {passive:true});
+      cell.addEventListener('touchmove', e=>{
+        const touch = e.touches[0];
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        if(el && el.classList.contains('sg-cell')) applyCell(el);
+      }, {passive:true});
+
+      row.appendChild(cell);
+    }
+    sgBody.appendChild(row);
+  });
+
+  document.addEventListener('mouseup', ()=>{ isDragging=false; updateStats(); });
+  document.addEventListener('touchend', ()=>{ isDragging=false; updateStats(); });
+}
+
+function applyCell(cell){
+  cell.classList.remove('f','b');
+  if(dragMode === 'free')  cell.classList.add(dragMode);
+}
+
+function updateStats(){
+  const all = document.querySelectorAll('#sg-body .sg-cell');
+  let f=0, b=0;
+  all.forEach(c=>{ if(c.classList.contains('f')) f++; else if(c.classList.contains('b')) b++; });
+  const cf=document.getElementById('cnt-free'), cb=document.getElementById('cnt-busy');
+  if(cf) cf.textContent=f;
+  if(cb) cb.textContent=b;
+}
+
+function clearAll(){
+  document.querySelectorAll('#sg-body .sg-cell').forEach(c=>c.classList.remove('f','b'));
+  updateStats();
+}
+
+/* ── CHANNEL / DM switching ─────────────────────── */
+const DM_DATA = {
+  enkhtuyaa:    { name:'Энхтуяа',     ico:'👩‍🎨', desc:'Дизайн · 1-р курс · 79% таарсан',    common:'Лхагва 14:00–16:00' },
+  batmunkh:     { name:'Батмөнх',     ico:'🧑‍🔬', desc:'Эдийн засаг · 2-р курс · 72% таарсан', common:'Пүрэв 10:00–12:00' },
+  temuulen:     { name:'Тэмүүлэн',    ico:'🧑‍💼', desc:'Бизнес · 4-р курс · 65% таарсан',    common:'Баасан 09:00–11:00' },
+  oyuntsetseg:  { name:'Оюунцэцэг',   ico:'👩‍💻', desc:'Програм · 2-р курс · 76% таарсан',   common:'Мягмар 13:00–15:00' },
+  saraa:        { name:'Сарантуяа',   ico:'👩‍🏫', desc:'Програм · 3-р курс · 83% таарсан',   common:'Лхагва 10:00–12:00' },
+};
+
+const CH_NAMES = {
+  'general':        { icon:'#', desc:'МУИС-Д бүх оюутнуудын нийтийн чат' },
+  'study-room':     { icon:'#', desc:'Хамтран суралцах орон' },
+  'project-ideas':  { icon:'#', desc:'Проектийн санаа хуваалцах' },
+  'coffee-chat':    { icon:'#', desc:'Амралтын үеийн хөнгөн ярилцлага ☕' },
+  'off-topic':      { icon:'#', desc:'Аливаа сэдвээр ярилцах' },
+  'announcements':  { icon:'📢', desc:'Зарлал мэдэгдэл (зөвхөн унших)' },
+};
+
+function openChannel(ch) {
+  // Update sidebar active state
+  document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('on'));
+  document.querySelectorAll('.dm-item').forEach(el => el.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+
+  // Show channel view
+  document.getElementById('view-channel').style.display = 'flex';
+  document.getElementById('view-channel').style.flexDirection = 'column';
+  document.getElementById('view-channel').style.height = '100%';
+  document.getElementById('view-dm').style.display = 'none';
+
+  // Update topbar
+  const info = CH_NAMES[ch] || { icon:'#', desc:'' };
+  document.querySelector('.ct-icon').textContent = info.icon;
+  document.querySelector('.ct-name').textContent = ch;
+  document.querySelector('.ct-desc').textContent = info.desc;
+  document.getElementById('ch-inp').placeholder = `#${ch}-д бичих...`;
+
+  // Scroll to bottom
+  const msgs = document.getElementById('general-msgs');
+  if(msgs) msgs.scrollTop = msgs.scrollHeight;
+}
+
+function openDM(key) {
+  const d = DM_DATA[key];
+  if(!d) return;
+
+  // Update sidebar active state
+  document.querySelectorAll('.ch-item').forEach(el => el.classList.remove('on'));
+  document.querySelectorAll('.dm-item').forEach(el => el.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+
+  // Show DM view
+  document.getElementById('view-channel').style.display = 'none';
+  const dmView = document.getElementById('view-dm');
+  dmView.style.display = 'flex';
+  dmView.style.flexDirection = 'column';
+  dmView.style.height = '100%';
+
+  // Update DM header
+  document.getElementById('dm-ico').textContent = d.ico;
+  document.getElementById('dm-name').textContent = d.name;
+  document.getElementById('dm-desc').textContent = d.desc;
+  document.getElementById('dm-common').textContent = d.common;
+  document.getElementById('dm-inp').placeholder = `${d.name}-д мессеж бичих...`;
+
+  // Clear unread badge on click
+  const badge = event.currentTarget.querySelector('.dm-unread');
+  if(badge) badge.remove();
+
+  // Scroll to bottom
+  const msgs = document.getElementById('dm-msgs');
+  if(msgs) msgs.scrollTop = msgs.scrollHeight;
+}
+
+/* ── Send message: community channel ── */
+function sendCommunityMsg(e) {
+  if(e.key !== 'Enter' && e.type !== 'click') return;
+  const inp = document.getElementById('ch-inp');
+  const text = inp.value.trim();
+  if(!text) return;
+
+  const msgs = document.getElementById('general-msgs');
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+  const msg = document.createElement('div');
+  msg.className = 'cmsg';
+  msg.innerHTML = `
+    <div class="cmsg-av" style="background:linear-gradient(135deg,var(--coral),var(--coral2))">😊</div>
+    <div class="cmsg-body">
+      <div class="cmsg-header">
+        <span class="cmsg-name me-name">Мягмарсүрэн (Та)</span>
+        <span class="cmsg-badge cmsg-badge-mod">Програм · 3-р курс</span>
+        <span class="cmsg-time">${time}</span>
+      </div>
+      <div class="cmsg-text">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>`;
+  msgs.appendChild(msg);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  inp.value = '';
+
+  // Simulate reply after 1.5s
+  if(Math.random() > 0.5) {
+    const replies = [
+      { av:'👩‍💻', bg:'#FFE4D8,#F9C4A8', name:'Номинчимэг', badge:'Програм · 3-р курс', texts:['👍','Сайхан санаа!','Баярлалаа 🙏'] },
+      { av:'🧑‍🔬', bg:'#E4F4E8,#C0D8C4',  name:'Батмөнх',    badge:'Эдийн засаг · 2-р курс', texts:['Тийм байна!','❤️','Оке 👌'] },
+      { av:'👩‍🎨', bg:'#E4EAF4,#C0CCE0',  name:'Энхтуяа',   badge:'Дизайн · 1-р курс', texts:['Сайхан!','Баярлалаа ✨','👀'] },
+    ];
+    const r = replies[Math.floor(Math.random()*replies.length)];
+    const replyText = r.texts[Math.floor(Math.random()*r.texts.length)];
+    setTimeout(()=>{
+      const t2 = new Date();
+      const time2 = t2.getHours().toString().padStart(2,'0') + ':' + t2.getMinutes().toString().padStart(2,'0');
+      const reply = document.createElement('div');
+      reply.className = 'cmsg';
+      reply.innerHTML = `
+        <div class="cmsg-av" style="background:linear-gradient(135deg,${r.bg})">${r.av}</div>
+        <div class="cmsg-body">
+          <div class="cmsg-header">
+            <span class="cmsg-name">${r.name}</span>
+            <span class="cmsg-badge cmsg-badge-free">${r.badge}</span>
+            <span class="cmsg-time">${time2}</span>
+          </div>
+          <div class="cmsg-text">${replyText}</div>
+        </div>`;
+      msgs.appendChild(reply);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 1200 + Math.random()*1000);
+  }
+}
+
+/* ── Send message: DM ── */
+function sendDMMsg(e) {
+  if(e.key !== 'Enter' && e.type !== 'click') return;
+  const inp = document.getElementById('dm-inp');
+  const text = inp.value.trim();
+  if(!text) return;
+
+  const msgs = document.getElementById('dm-msgs');
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+  const row = document.createElement('div');
+  row.className = 'msg-row me';
+  row.innerHTML = `
+    <div class="msg-av" style="background:linear-gradient(135deg,var(--coral),var(--coral2))">😊</div>
+    <div>
+      <div class="bubble m">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="msg-time">${time}</div>
+    </div>`;
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+  inp.value = '';
+}
+
+/* ── Reaction toggle ─────────────────────────────── */
+document.addEventListener('click', e => {
+  const r = e.target.closest('.reaction');
+  if(!r) return;
+  r.classList.toggle('active');
+  const cnt = r.querySelector('.reaction-count');
+  if(cnt) cnt.textContent = parseInt(cnt.textContent) + (r.classList.contains('active') ? 1 : -1);
+});
+
+/* ── Init: scroll msgs to bottom on load ─────────── */
+window.addEventListener('load', () => {
+  const m = document.getElementById('general-msgs');
+  if(m) m.scrollTop = m.scrollHeight;
+});
+</script>
+
+<!-- ══════════════════════════════════════════════
+  10 · MY PROFILE  — өөрийн профайл + засах
+══════════════════════════════════════════════ -->
+<div id="my-profile" class="sc">
+<div class="profile-page">
+
+  <!-- Edit / View toggle -->
+  <div id="mp-view">
+
+    <!-- Cover -->
+    <div class="prof-cover" style="background:linear-gradient(135deg,#FFE8DE,#FFD0BE 50%,#FFC0A8)">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:120px;opacity:.12">🎨</div>
+      <button class="prof-cover-edit" onclick="go('sched')">📅 Хуваарь засах</button>
+    </div>
+
+    <!-- Avatar row -->
+    <div class="prof-av-row">
+      <div class="prof-av">😊
+        <div class="prof-av-edit-btn" onclick="startEdit()">✏️</div>
+      </div>
+      <div class="prof-av-actions">
+        <button class="prof-btn-edit" onclick="startEdit()">✏️ Засах</button>
+        <button class="prof-btn-more">⋯</button>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="prof-info">
+      <div class="prof-name">
+        Мягмарсүрэн Д., 22
+        <span class="prof-verified">✓ Баталгаажсан</span>
+      </div>
+      <div class="prof-handle">@mxgmarsuren · 20B1NUM0042@num.edu.mn</div>
+      <div class="prof-meta">
+        <span class="prof-meta-item">🎓 Программ хангамж</span>
+        <span class="prof-meta-item">📚 3-р курс</span>
+        <span class="prof-meta-item">📍 МУИС-Д</span>
+        <span class="prof-meta-item" style="color:var(--mint)">● Онлайн</span>
+      </div>
+      <div class="prof-bio">Программ хангамжийн 3-р курсын оюутан. Хиймэл оюун болон веб хөгжүүлэлтэд дуртай. Хамт код бичих, судалгаа хийх хамтрагч хайж байна. Кофе + ном = аз жаргал ☕📚</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="prof-stats">
+      <div class="prof-stat">
+        <div class="prof-stat-n">87%</div>
+        <div class="prof-stat-l">Дундаж Match</div>
+      </div>
+      <div class="prof-stat">
+        <div class="prof-stat-n">14</div>
+        <div class="prof-stat-l">Холбоо</div>
+      </div>
+      <div class="prof-stat">
+        <div class="prof-stat-n">4.8</div>
+        <div class="prof-stat-l">Үнэлгэлт</div>
+      </div>
+      <div class="prof-stat">
+        <div class="prof-stat-n">24ц</div>
+        <div class="prof-stat-l">Чөлөөт цаг</div>
+      </div>
+    </div>
+
+    <!-- Сонирхол -->
+    <div class="prof-section">
+      <div class="prof-section-h">
+        Сонирхол
+        <span class="prof-section-edit" onclick="startEdit()">Засах</span>
+      </div>
+      <div class="prof-tags">
+        <span class="prof-tag">💻 Код бичих</span>
+        <span class="prof-tag">☕ Кофе</span>
+        <span class="prof-tag">📖 Уншлага</span>
+        <span class="prof-tag">🤖 AI</span>
+        <span class="prof-tag">🎨 Дизайн</span>
+        <span class="prof-tag">🎮 Тоглоом</span>
+      </div>
+    </div>
+
+    <!-- Зорилго -->
+    <div class="prof-section">
+      <div class="prof-section-h">Хамтрах зорилго</div>
+      <div class="prof-tags">
+        <span class="prof-tag goal">📚 Хамт суралцах</span>
+        <span class="prof-tag goal">💻 Проект</span>
+        <span class="prof-tag goal">🔬 Судалгаа</span>
+      </div>
+    </div>
+
+    <!-- Хуваарь preview -->
+    <div class="prof-section">
+      <div class="prof-section-h">
+        Хуваарь
+        <span class="prof-section-edit" onclick="go('sched')">Засах →</span>
+      </div>
+      <div class="prof-sched">
+        <div class="prof-sched-days">
+          <div class="psd today">ДА</div><div class="psd">МЯ</div><div class="psd">ЛХ</div>
+          <div class="psd">ПҮ</div><div class="psd">БА</div><div class="psd">БЯ</div><div class="psd">НЯ</div>
+        </div>
+        <div class="prof-sched-grid" id="mp-sched-grid"></div>
+        <div class="prof-sched-footer">
+          <div class="prof-sched-legend">
+            <div class="psl"><div class="psl-sq" style="background:rgba(255,92,92,.38);border:1.5px solid var(--coral)"></div>Чөлөөт</div>
+            <div class="psl"><div class="psl-sq" style="background:rgba(74,158,255,.25);border:1.5px solid var(--sky)"></div>Хичээл</div>
+          </div>
+          <span style="font-size:12px;color:var(--muted)">24 чөлөөт цаг/долоо хоног</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Үнэлгэлт -->
+    <div class="prof-section">
+      <div class="prof-section-h">Хүлээн авсан үнэлгэлт</div>
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:16px">
+        <div style="text-align:center">
+          <div style="font-family:'Fraunces',serif;font-size:48px;font-weight:700;color:var(--coral);line-height:1">4.8</div>
+          <div style="display:flex;gap:2px;justify-content:center;margin:4px 0">
+            <span style="font-size:16px;color:var(--gold)">★★★★★</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">24 үнэлгэлт</div>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:11px;color:var(--muted);width:14px">5</span>
+              <div style="flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden"><div style="width:79%;height:100%;background:var(--gold);border-radius:3px"></div></div>
+              <span style="font-size:11px;color:var(--muted);width:20px">79%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:11px;color:var(--muted);width:14px">4</span>
+              <div style="flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden"><div style="width:17%;height:100%;background:var(--gold);border-radius:3px"></div></div>
+              <span style="font-size:11px;color:var(--muted);width:20px">17%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:11px;color:var(--muted);width:14px">3</span>
+              <div style="flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden"><div style="width:4%;height:100%;background:var(--gold);border-radius:3px"></div></div>
+              <span style="font-size:11px;color:var(--muted);width:20px">4%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-top">
+          <div class="rev-av">👩‍🎨</div>
+          <div><div class="rev-name">Энхтуяа</div><div class="rev-meta">Дизайн · 1-р курс · 3 хоногийн өмнө</div></div>
+          <div class="rev-stars">⭐⭐⭐⭐⭐</div>
+        </div>
+        <div class="rev-text">Маш их тусалсан! Figma template хуваалцсан, веб хөгжүүлэлтийн зөвлөгөө өгсөн. Хамт суралцахад маш таатай байлаа 😊</div>
+      </div>
+      <div class="review-card">
+        <div class="review-top">
+          <div class="rev-av">🧑‍🔬</div>
+          <div><div class="rev-name">Батмөнх</div><div class="rev-meta">Эдийн засаг · 2-р курс · 1 долоо хоногийн өмнө</div></div>
+          <div class="rev-stars">⭐⭐⭐⭐⭐</div>
+        </div>
+        <div class="rev-text">Алгоритмын даалгавар хийхэд маш сайн тусалсан. Ойлгомжтой тайлбарласан, тэвчээртэй, найрсаг хүн.</div>
+      </div>
+    </div>
+
+    <!-- SNS -->
+    <div class="prof-section">
+      <div class="prof-section-h">
+        Холбоос
+        <span class="prof-section-edit" onclick="startEdit()">Засах</span>
+      </div>
+      <div class="prof-sns">
+        <a class="sns-chip" href="#">
+          <span>📷</span>Instagram
+        </a>
+        <a class="sns-chip" href="#">
+          <span>💻</span>GitHub
+        </a>
+        <a class="sns-chip" href="#">
+          <span>💼</span>LinkedIn
+        </a>
+      </div>
+    </div>
+
+    <div style="height:32px"></div>
+  </div><!-- /mp-view -->
+
+  <!-- ── EDIT MODE ── -->
+  <div id="mp-edit" style="display:none">
+    <div style="background:var(--white);border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:44px;z-index:50">
+      <button onclick="cancelEdit()" style="background:none;border:none;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit">Цуцлах</button>
+      <span style="font-family:'Fraunces',serif;font-size:17px;font-weight:700">Профайл засах</span>
+      <button onclick="saveEdit()" style="background:var(--coral);border:none;color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;padding:9px 20px;border-radius:50px;box-shadow:0 4px 14px rgba(255,92,92,.3)">Хадгалах</button>
+    </div>
+
+    <div style="padding:24px 24px 80px">
+
+      <!-- Photo grid edit -->
+      <div class="prof-photo-grid">
+        <div class="ppg-main">
+          <div class="ppg-main-emo">😊</div>
+          <div class="ppg-main-add">
+            <div style="font-size:28px;color:var(--coral)">📷</div>
+            <div style="font-size:12px;font-weight:700;color:var(--coral)">Гол зураг</div>
+          </div>
+          <div class="ppg-badge">ГОЛ</div>
+        </div>
+        <div class="ppg-sec"><span>+</span><span class="ppg-sec-lbl">Зураг 2</span></div>
+        <div class="ppg-sec"><span>+</span><span class="ppg-sec-lbl">Зураг 3</span></div>
+        <div class="ppg-sec"><span>+</span><span class="ppg-sec-lbl">Зураг 4</span></div>
+        <div class="ppg-sec"><span>+</span><span class="ppg-sec-lbl">Зураг 5</span></div>
+      </div>
+
+      <div class="prof-edit-field">
+        <label class="prof-edit-label">Нэр *</label>
+        <input class="prof-edit-input" id="edit-name" value="Мягмарсүрэн Д.">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="prof-edit-field">
+          <label class="prof-edit-label">Мэргэжил *</label>
+          <select class="prof-edit-input" style="cursor:pointer">
+            <option selected>Программ хангамж</option>
+            <option>Мэдээллийн технологи</option>
+            <option>Эдийн засаг</option>
+            <option>Бизнес</option>
+            <option>Хууль</option>
+            <option>Математик</option>
+            <option>Дизайн</option>
+          </select>
+        </div>
+        <div class="prof-edit-field">
+          <label class="prof-edit-label">Дамжаа *</label>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <button class="yr-pill">1</button><button class="yr-pill">2</button>
+            <button class="yr-pill on">3</button><button class="yr-pill">4</button>
+            <button class="yr-pill">5</button><button class="yr-pill">6</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="prof-edit-field">
+        <label class="prof-edit-label">Танилцуулга <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(155/300)</span></label>
+        <textarea class="prof-edit-input" rows="4" id="edit-bio" style="resize:none">Программ хангамжийн 3-р курсын оюутан. Хиймэл оюун болон веб хөгжүүлэлтэд дуртай. Хамт код бичих, судалгаа хийх хамтрагч хайж байна. Кофе + ном = аз жаргал ☕📚</textarea>
+      </div>
+
+      <div class="prof-edit-field">
+        <label class="prof-edit-label">Сонирхол <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">— дарж нэмж арилгаарай</span></label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <button class="tag on">💻 Код бичих</button>
+          <button class="tag on">☕ Кофе</button>
+          <button class="tag on">📖 Уншлага</button>
+          <button class="tag on">🤖 AI</button>
+          <button class="tag on">🎨 Дизайн</button>
+          <button class="tag on">🎮 Тоглоом</button>
+          <button class="tag">🎵 Хөгжим</button>
+          <button class="tag">⚽ Спорт</button>
+          <button class="tag">✈️ Аялал</button>
+          <button class="tag">📷 Фото</button>
+          <button class="tag">🔬 Шинжлэх ухаан</button>
+        </div>
+      </div>
+
+      <div class="prof-edit-field">
+        <label class="prof-edit-label">Хамтрах зорилго</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <button class="tag goal-tag on">📚 Хамт суралцах</button>
+          <button class="tag goal-tag on">💻 Проект</button>
+          <button class="tag goal-tag on">🔬 Судалгаа</button>
+          <button class="tag goal-tag">☕ Амрах</button>
+          <button class="tag goal-tag">🗣️ Хэлний практик</button>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--line);margin:4px 0 20px"></div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:14px">SNS холбоосууд — заавал биш</div>
+
+      <div class="prof-edit-field">
+        <label class="prof-edit-label">Instagram</label>
+        <input class="prof-edit-input" placeholder="@username" value="@mxgmarsuren">
+      </div>
+      <div class="prof-edit-field">
+        <label class="prof-edit-label">GitHub</label>
+        <input class="prof-edit-input" placeholder="github.com/username" value="github.com/mxgmar">
+      </div>
+      <div class="prof-edit-field">
+        <label class="prof-edit-label">LinkedIn</label>
+        <input class="prof-edit-input" placeholder="linkedin.com/in/...">
+      </div>
+
+      <div style="border-top:1px solid var(--line);margin:4px 0 20px"></div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:14px">Аюулгүй байдал</div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--surface);border-radius:var(--r);margin-bottom:10px">
+        <div>
+          <div style="font-size:14px;font-weight:600">Профайл харагдах байдал</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Бүртгэлтэй бүх оюутанд харагдана</div>
+        </div>
+        <div style="width:44px;height:26px;background:var(--coral);border-radius:13px;cursor:pointer;position:relative;flex-shrink:0">
+          <div style="position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2)"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--surface);border-radius:var(--r)">
+        <div>
+          <div style="font-size:14px;font-weight:600">Хуваарь харагдах</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Match score-д хуваарь ашиглана</div>
+        </div>
+        <div style="width:44px;height:26px;background:var(--coral);border-radius:13px;cursor:pointer;position:relative;flex-shrink:0">
+          <div style="position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2)"></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /mp-edit -->
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  11 · USER PROFILE  — бусдын профайл харах
+══════════════════════════════════════════════ -->
+<div id="user-profile" class="sc">
+<div class="profile-page">
+
+  <!-- Cover -->
+  <div class="prof-cover" style="background:linear-gradient(135deg,#FFE0E8,#FFC8D8 50%,#FFB0C8)">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:120px;opacity:.12">💻</div>
+    <button class="prof-cover-back" onclick="go('discover')">←</button>
+
+    <!-- Match score badge -->
+    <div style="position:absolute;top:14px;right:14px">
+      <div class="match-score-ring">
+        <div class="msr-n">87%</div>
+        <div class="msr-l">таарсан</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Avatar row -->
+  <div class="prof-av-row">
+    <div class="prof-av" style="background:linear-gradient(135deg,#FFE4D8,#F9C4A8)">👩‍💻</div>
+    <div class="prof-av-actions">
+      <button class="prof-btn-save" title="Хадгалах" id="up-save-btn" onclick="toggleSave()">🔖</button>
+      <button class="prof-btn-more">⋯</button>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="prof-info">
+    <div class="prof-name">
+      Номинчимэг, 21
+      <span class="prof-verified">✓ Баталгаажсан</span>
+    </div>
+    <div class="prof-handle">Программ хангамж · 3-р курс</div>
+    <div class="prof-meta">
+      <span class="prof-meta-item">📅 14 нийтлэг цаг</span>
+      <span class="prof-meta-item" style="color:var(--mint)">● Онлайн</span>
+      <span class="prof-meta-item">⭐ 4.8 (24 үнэлгэлт)</span>
+    </div>
+    <div class="prof-bio">Программ хангамжийн 3-р курсын оюутан. Хиймэл оюун болон веб хөгжүүлэлтэд хүсэл тэмүүлэлтэй. Хамт код бичих, судалгаа хийх хүн хайж байна. Кофе + ном = аз жаргал ☕📚</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="prof-stats">
+    <div class="prof-stat">
+      <div class="prof-stat-n">87%</div>
+      <div class="prof-stat-l">Match оноо</div>
+    </div>
+    <div class="prof-stat">
+      <div class="prof-stat-n">14ц</div>
+      <div class="prof-stat-l">Нийтлэг цаг</div>
+    </div>
+    <div class="prof-stat">
+      <div class="prof-stat-n">4.8</div>
+      <div class="prof-stat-l">Үнэлгэлт</div>
+    </div>
+    <div class="prof-stat">
+      <div class="prof-stat-n">18</div>
+      <div class="prof-stat-l">Холбоо</div>
+    </div>
+  </div>
+
+  <!-- Сонирхол -->
+  <div class="prof-section">
+    <div class="prof-section-h">Сонирхол</div>
+    <div class="prof-tags">
+      <span class="prof-tag">💻 Код бичих</span>
+      <span class="prof-tag">☕ Кофе</span>
+      <span class="prof-tag">📖 Уншлага</span>
+      <span class="prof-tag">🤖 AI</span>
+      <span class="prof-tag">🎨 Дизайн</span>
+    </div>
+  </div>
+
+  <!-- Зорилго -->
+  <div class="prof-section">
+    <div class="prof-section-h">Хамтрах зорилго</div>
+    <div class="prof-tags">
+      <span class="prof-tag goal">💻 Проект</span>
+      <span class="prof-tag goal">📚 Судалгаа</span>
+      <span class="prof-tag goal">☕ Амрах</span>
+    </div>
+  </div>
+
+  <!-- Нийтлэг цаг -->
+  <div class="prof-section">
+    <div class="prof-section-h">Нийтлэг чөлөөт цаг</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      <span class="common-slot">📅 Лхагва 14:00–16:00</span>
+      <span class="common-slot">📅 Пүрэв 10:00–12:00</span>
+      <span class="common-slot">📅 Баасан 13:00–15:00</span>
+    </div>
+
+    <!-- Schedule comparison -->
+    <div class="prof-sched">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-size:12px;font-weight:700;color:var(--muted)">Хуваарийн харьцуулалт</span>
+        <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;background:var(--peach);color:var(--coral)">87% давхцал</span>
+      </div>
+      <div class="prof-sched-days">
+        <div class="psd today">ДА</div><div class="psd">МЯ</div><div class="psd">ЛХ</div>
+        <div class="psd">ПҮ</div><div class="psd">БА</div><div class="psd">БЯ</div><div class="psd">НЯ</div>
+      </div>
+      <div class="prof-sched-grid" id="up-sched-grid"></div>
+      <div class="prof-sched-footer">
+        <div class="prof-sched-legend">
+          <div class="psl"><div class="psl-sq" style="background:rgba(255,92,92,.6);border:1.5px solid var(--coral)"></div>Хоёулаа чөлөөт</div>
+          <div class="psl"><div class="psl-sq" style="background:rgba(255,92,92,.22);border:1.5px solid rgba(255,92,92,.4)"></div>Зөвхөн тэр</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Үнэлгэлт -->
+  <div class="prof-section">
+    <div class="prof-section-h">
+      Үнэлгэлт
+      <span style="font-size:12px;font-weight:700;color:var(--coral);cursor:pointer;letter-spacing:0;text-transform:none" onclick="toggleRatingForm()">Үнэлэх +</span>
+    </div>
+
+    <!-- Stars input -->
+    <div id="rating-form" style="display:none;background:var(--surface);border-radius:var(--rm);padding:16px;margin-bottom:16px;border:1.5px solid var(--line)">
+      <div style="font-size:14px;font-weight:600;margin-bottom:10px">Номинчимэг-г үнэлэх</div>
+      <div class="prof-rating-row" style="margin-bottom:12px">
+        <div class="prof-stars" id="star-row">
+          <span class="prof-star on" data-v="1">★</span>
+          <span class="prof-star on" data-v="2">★</span>
+          <span class="prof-star on" data-v="3">★</span>
+          <span class="prof-star on" data-v="4">★</span>
+          <span class="prof-star" data-v="5">★</span>
+        </div>
+        <span style="font-size:14px;color:var(--muted);font-weight:600" id="star-label">4 од</span>
+      </div>
+      <textarea class="prof-edit-input" rows="2" placeholder="Сэтгэгдэл бичих... (заавал биш)" style="resize:none;margin-bottom:10px"></textarea>
+      <button onclick="submitRating()" style="padding:10px 22px;border-radius:50px;background:var(--coral);color:#fff;font-size:13px;font-weight:800;border:none;cursor:pointer;font-family:inherit">Үнэлгэлт илгээх</button>
+    </div>
+
+    <div class="review-card">
+      <div class="review-top">
+        <div class="rev-av">🧑‍🔬</div>
+        <div><div class="rev-name">Батмөнх</div><div class="rev-meta">Эдийн засаг · 2-р курс · 2 хоногийн өмнө</div></div>
+        <div class="rev-stars">⭐⭐⭐⭐⭐</div>
+      </div>
+      <div class="rev-text">Алгоритмын даалгавар хийхэд маш сайн тусалсан. Тайлбарлах чадвар маш өндөр, хамтран ажиллахад таатай.</div>
+    </div>
+    <div class="review-card">
+      <div class="review-top">
+        <div class="rev-av">👩‍🎨</div>
+        <div><div class="rev-name">Энхтуяа</div><div class="rev-meta">Дизайн · 1-р курс · 1 долоо хоногийн өмнө</div></div>
+        <div class="rev-stars">⭐⭐⭐⭐⭐</div>
+      </div>
+      <div class="rev-text">React project-д хамт ажиллалаа. Мэдлэг өндөр, хуваалцдаг, найрсаг хүн. Дахин хамтрах дуртай байна 🙌</div>
+    </div>
+  </div>
+
+  <!-- SNS -->
+  <div class="prof-section">
+    <div class="prof-section-h">Холбоос</div>
+    <div class="prof-sns">
+      <a class="sns-chip" href="#">📷 Instagram</a>
+      <a class="sns-chip" href="#">💻 GitHub</a>
+    </div>
+  </div>
+
+  <div style="height:88px"></div>
+
+  <!-- Sticky CTA -->
+  <div class="prof-sticky-cta">
+    <button class="prof-btn-save" style="width:48px;height:48px;font-size:20px" id="up-save2" onclick="toggleSave()">🔖</button>
+    <button onclick="go('chat')" style="flex:1;padding:14px;border-radius:50px;background:var(--coral);color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(255,92,92,.3);transition:.2s" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+      💬 Мессеж илгээх
+    </button>
+  </div>
+</div>
+</div>
+
+<script>
+/* ── Profile: My Profile edit mode ── */
+function startEdit(){
+  document.getElementById('mp-view').style.display='none';
+  document.getElementById('mp-edit').style.display='block';
+  window.scrollTo(0,0);
+}
+function cancelEdit(){
+  document.getElementById('mp-edit').style.display='none';
+  document.getElementById('mp-view').style.display='block';
+  window.scrollTo(0,0);
+}
+function saveEdit(){
+  // In real app: API call. Here just show view mode.
+  const name = document.getElementById('edit-name')?.value || 'Мягмарсүрэн Д.';
+  const bio  = document.getElementById('edit-bio')?.value || '';
+  document.querySelector('#mp-view .prof-name').childNodes[0].textContent = name + ', 22 ';
+  if(bio && document.querySelector('#mp-view .prof-bio')) document.querySelector('#mp-view .prof-bio').textContent = bio;
+  cancelEdit();
+  // flash save feedback
+  const fb = document.createElement('div');
+  fb.textContent='✓ Хадгалагдлаа';
+  fb.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--mint);color:#fff;padding:10px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:fadeUp .3s ease';
+  document.body.appendChild(fb);
+  setTimeout(()=>fb.remove(), 2400);
+}
+
+/* ── Profile: Save toggle ── */
+let isSaved = false;
+function toggleSave(){
+  isSaved = !isSaved;
+  const ico = isSaved ? '❤️' : '🔖';
+  ['up-save-btn','up-save2'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=ico;
+  });
+}
+
+/* ── Rating form ── */
+function toggleRatingForm(){
+  const f=document.getElementById('rating-form');
+  f.style.display = f.style.display==='none' ? 'block' : 'none';
+}
+
+document.addEventListener('click', e=>{
+  const star = e.target.closest('.prof-star');
+  if(!star) return;
+  const v = parseInt(star.dataset.v);
+  document.querySelectorAll('.prof-star').forEach(s=>{
+    s.classList.toggle('on', parseInt(s.dataset.v) <= v);
+  });
+  const labels = ['','1 од — Муу','2 од — Дунд','3 од — Сайн','4 од — Маш сайн','5 од — Гайхалтай!'];
+  const lbl = document.getElementById('star-label');
+  if(lbl) lbl.textContent = labels[v] || '';
+});
+
+function submitRating(){
+  const f=document.getElementById('rating-form');
+  if(f) f.style.display='none';
+  const fb=document.createElement('div');
+  fb.textContent='⭐ Үнэлгэлт илгээгдлээ!';
+  fb.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--coral);color:#fff;padding:10px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;box-shadow:0 4px 16px rgba(255,92,92,.3);animation:fadeUp .3s ease';
+  document.body.appendChild(fb);
+  setTimeout(()=>fb.remove(), 2400);
+}
+
+/* ── Schedule mini grids ── */
+const MY_PAT = [
+  ['b','','b','','f','f',''],['b','','b','','f','f',''],
+  ['','b','','b','f','',''],['','b','','b','f','',''],
+  ['f','f','f','f','f','f','f'],['f','f','f','f','f','f','f'],
+  ['b','f','b','f','f','f',''],['b','f','b','f','f','f',''],
+  ['','','f','','f','f',''],['','','f','','f','f',''],
+  ['f','','','f','','',''],['f','','','f','','',''],
+  ['','','','','','',''],['','','','','','',''],
+];
+// Нөгөө хүний хуваарь (Номинчимэг) — зарим давхцалтай
+const HER_PAT = [
+  ['','b','f','','b','f',''],['','b','f','','b','f',''],
+  ['b','','f','b','','f',''],['b','','f','b','','f',''],
+  ['f','f','f','f','f','f','f'],['f','f','f','f','f','f','f'],
+  ['','f','','f','f','f',''],['','f','','f','f','f',''],
+  ['f','','f','f','','f',''],['f','','f','f','','f',''],
+  ['','f','f','','f','',''],['','f','f','','f','',''],
+  ['','','','','','',''],['','','','','','',''],
+];
+
+function buildSchedGrid(elId, myPat, herPat){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  // for user profile show common (darker) vs solo
+  const showCommon = (herPat != null);
+  const cols = (myPat[0] || []).map((_, ci) => {
+    const col = document.createElement('div');
+    col.className = 'psc';
+    myPat.forEach((row, ri) => {
+      const s = document.createElement('div');
+      const myV  = row[ci];
+      const herV = herPat ? (herPat[ri]||[])[ci] : null;
+      s.className = 'pss';
+      if(showCommon){
+        if(myV==='f' && herV==='f') s.style.background='rgba(255,92,92,.65)'; // common free
+        else if(myV==='f') s.style.background='rgba(255,92,92,.22)';
+        else if(herV==='f') s.style.background='rgba(74,158,255,.18)';
+      } else {
+        if(myV==='f') s.classList.add('f');
+        else if(myV==='b') s.classList.add('b');
+      }
+      col.appendChild(s);
+    });
+    return col;
+  });
+  const grid = document.createElement('div');
+  grid.className = 'prof-sched-grid';
+  cols.forEach(c => grid.appendChild(c));
+  el.appendChild(grid);
+}
+
+// Build on first render
+window.addEventListener('load', ()=>{
+  buildSchedGrid('mp-sched-grid', MY_PAT, null);
+  buildSchedGrid('up-sched-grid', MY_PAT, HER_PAT);
+});
+</script>
+</body>
+</html>
