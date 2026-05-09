@@ -10,81 +10,54 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = resolve(__dirname, '..', 'data');
 const loadJson = (file) => JSON.parse(readFileSync(resolve(dataDir, file), 'utf8'));
 
+// ─── Эхлэхэд нэг л удаа уншина (статик data) ──────────────────
+const STATS    = loadJson('stats.json');
+const FEATURES = loadJson('features.json');
+const KPIS     = loadJson('kpis.json');
+const REPORTS  = loadJson('reports.json');
+const DAU      = loadJson('dau.json');
+const SCHEDULE = loadJson('schedule.json');
+const PLANS    = loadJson('plans.json');
+
 const router = Router();
 
 // ─── Landing ─────────────────────────────────────────────────
-// GET /api/stats
-router.get('/stats', (req, res) => {
-  res.json(loadJson('stats.json'));
-});
-
-// GET /api/features
-router.get('/features', (req, res) => {
-  res.json(loadJson('features.json'));
-});
+router.get('/stats',    (_req, res) => res.json(STATS));
+router.get('/features', (_req, res) => res.json(FEATURES));
 
 // ─── Admin ───────────────────────────────────────────────────
-// GET /api/admin/kpis
-router.get('/admin/kpis', (req, res) => {
-  res.json(loadJson('kpis.json'));
-});
+router.get('/admin/kpis', (_req, res) => res.json(KPIS));
 
-// GET /api/admin/reports
-// Жишээ: /api/admin/reports?status=open
+// GET /api/admin/reports — Жишээ: ?status=open
 router.get('/admin/reports', (req, res) => {
-  let reports = loadJson('reports.json');
-  if (req.query.status) {
-    reports = reports.filter(r => r.status === req.query.status);
-  }
+  const reports = req.query.status
+    ? REPORTS.filter(r => r.status === req.query.status)
+    : REPORTS;
   res.json({ count: reports.length, data: reports });
 });
 
-// GET /api/admin/reports/:id
 router.get('/admin/reports/:id', (req, res) => {
-  const reports = loadJson('reports.json');
-  const report = reports.find(r => r.id === req.params.id);
+  const report = REPORTS.find(r => r.id === req.params.id);
   if (!report) return res.status(404).json({ error: 'Гомдол олдсонгүй' });
   res.json(report);
 });
 
-// GET /api/admin/dau
-router.get('/admin/dau', (req, res) => {
-  res.json(loadJson('dau.json'));
-});
+router.get('/admin/dau', (_req, res) => res.json(DAU));
 
 // ─── Schedule ────────────────────────────────────────────────
-// GET /api/schedule/template
-router.get('/schedule/template', (req, res) => {
-  const sched = loadJson('schedule.json');
-  res.json({
-    days:     sched.days,
-    hours:    sched.hours,
-    template: sched.template
-  });
-});
-
-// GET /api/schedule/days
-router.get('/schedule/days', (req, res) => {
-  const sched = loadJson('schedule.json');
-  res.json(sched.days);
-});
-
-// GET /api/schedule/hours
-router.get('/schedule/hours', (req, res) => {
-  const sched = loadJson('schedule.json');
-  res.json(sched.hours);
-});
+router.get('/schedule/template', (_req, res) => res.json({
+  days:     SCHEDULE.days,
+  hours:    SCHEDULE.hours,
+  template: SCHEDULE.template
+}));
+router.get('/schedule/days',  (_req, res) => res.json(SCHEDULE.days));
+router.get('/schedule/hours', (_req, res) => res.json(SCHEDULE.hours));
 
 // ─── Premium багц ────────────────────────────────────────────
-// GET /api/premium/plans
-router.get('/premium/plans', (req, res) => {
-  res.json(loadJson('plans.json'));
-});
+router.get('/premium/plans', (_req, res) => res.json(PLANS));
 
-// GET /api/premium/plans/:id
 router.get('/premium/plans/:id', (req, res) => {
-  const plans = loadJson('plans.json');
-  const plan = plans.find(p => p.id === req.params.id);
+  const plan = PLANS.find(p => p.id === req.params.id);
   if (!plan) return res.status(404).json({ error: 'Багц олдсонгүй' });
   res.json(plan);
 });

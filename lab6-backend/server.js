@@ -12,20 +12,22 @@ import member3 from './routes/member3.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 
 // Static dashboard: http://localhost:3000/dashboard.html
 app.use(express.static(resolve(__dirname, 'public')));
 
-// Хүсэлт лог
-app.use((req, _res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+// Хүсэлт лог (development үед)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, _res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+  });
+}
 
 // API routes
 app.use('/api', member1); // Гишүүн 1
@@ -37,7 +39,7 @@ app.get('/', (req, res) => {
   res.json({
     name: 'NumConnect API',
     version: '1.0.0',
-    dashboard: 'http://localhost:' + PORT + '/dashboard.html',
+    dashboard: `http://localhost:${PORT}/dashboard.html`,
     endpoints: {
       member1: [
         'GET    /api/users',
