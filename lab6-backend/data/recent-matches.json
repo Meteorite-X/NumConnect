@@ -1,0 +1,5 @@
+[
+  { "name": "Энхтуяа",  "av": "👩‍🎨", "preview": "Маргааш цагтай уу?", "unread": 2, "online": true  },
+  { "name": "Батмөнх",  "av": "🧑‍🔬", "preview": "Сайн байна уу 👋",   "time": "1ц", "online": false },
+  { "name": "Тэмүүлэн", "av": "🧑‍💼", "preview": "React project?",     "time": "3ц", "online": false }
+]
