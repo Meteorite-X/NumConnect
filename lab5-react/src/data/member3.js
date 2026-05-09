@@ -41,7 +41,7 @@ export const scheduleHours = ["08","09","10","11","12","13","14","15","16","17",
 export const scheduleDays  = ["ДА","МЯ","ЛХ","ПҮ","БА","БЯ","НЯ"];
 
 export const dauChart = [
-  { day: "Да", value: 98,  height: 55 },
+  { day: "Да", value: 99,  height: 55 },
   { day: "Мя", value: 128, height: 72 },
   { day: "Лх", value: 86,  height: 48 },
   { day: "Пү", value: 156, height: 88 },

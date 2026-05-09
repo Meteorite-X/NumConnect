@@ -58,7 +58,7 @@ router.get('/premium/plans', (_req, res) => res.json(PLANS));
 
 router.get('/premium/plans/:id', (req, res) => {
   const plan = PLANS.find(p => p.id === req.params.id);
-  if (!plan) return res.status(404).json({ error: 'Багц олдсонгүй' });
+  if (!plan) return res.status(404).json({ error: 'Багц олдсонгүй ' });
   res.json(plan);
 });
 
