@@ -2,13 +2,11 @@
 
 МУИС оюутнуудад зориулсан хуваарь дээр суурилсан холбогдох платформ.
 
-Энэхүү repo нь NumConnect веб платформын хэд хэдэн хувилбарыг агуулна. Хавтас тус бүр **бие даан ажиллах** боломжтой.
-
 | Хавтас | Лаб | Технологи |
 |--------|------|-----------|
-| `/` (root) | Лаб 1-4 — анхдагч SPA | React 19 + Vite + React Router v7 |
 | [`lab5-react/`](./lab5-react) | **Лаб 5 — React Coding** | React 18 + Vite + React Router v6 |
 | [`lab6-backend/`](./lab6-backend) | **Лаб 6 — Backend API** | Node.js + Express.js + Static JSON |
+| [`test/`](./test) | Туршилт / анхны template | React 19 + Vite (хадгалагдсан) |
 
 ---
 
@@ -56,6 +54,13 @@ npm start    # http://localhost:3000
 
 ---
 
+## test/
+
+Анхны React + Vite template-ыг түүхэндээ хадгалахын тулд `test/` хавтас руу шилжүүлсэн.
+Шинэ ажил эндээс ороогүй — зөвхөн ишлэлд зориулагдсан.
+
+---
+
 ## Багийн гишүүдийн хариуцсан хэсэг
 
 | Гишүүн | Өгөгдөл (Лаб 4, 5) | API endpoint-ууд (Лаб 6) |
@@ -63,10 +68,3 @@ npm start    # http://localhost:3000
 | **Гишүүн 1** | `users`, `filters`, `recentMatches` | Хэрэглэгч / Discover / Auth (8 endpoint) |
 | **Гишүүн 2** | `chatMessages`, `generalMessages` | Чат / General (7 endpoint) |
 | **Гишүүн 3** | `stats`, `features`, `kpis`, `reports`, `dau`, `schedule`, `plans` | Landing / Admin / Schedule / Premium (11 endpoint) |
-
-## SPA лекцийн зарчим (11 SPA.pdf)
-
-- **URL-д контекст агуулагдах** — `/chat/enkh` шиг линк хуваалцах боломжтой
-- **Browser History API** — refresh, back/forward товч ажиллана
-- **Resource-based URL** — `/api/users/:id` (RESTful)
-- **Path параметр** vs **Query string** — өөр өөр зориулалт
