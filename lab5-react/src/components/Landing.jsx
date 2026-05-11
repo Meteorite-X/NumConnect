@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
-import { stats, features } from '../data/member3.js';
+import { stats as localStats, features as localFeatures } from '../data/member3.js';
+import { useApi } from '../hooks/useApi.js';
 
 export default function Landing() {
+  const { data: stats }    = useApi('/api/stats',    localStats);
+  const { data: features } = useApi('/api/features', localFeatures);
+
   return (
     <div className="sc on">
       <div className="land">

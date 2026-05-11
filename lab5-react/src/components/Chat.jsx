@@ -1,29 +1,54 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { users } from '../data/member1.js';
-import { chatMessages, generalMessages } from '../data/member2.js';
+import { users as localUsers } from '../data/member1.js';
+import { chatMessages as localChat } from '../data/member2.js';
+import { useApi } from '../hooks/useApi.js';
+import { api, unwrap } from '../api.js';
 
 export default function Chat() {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const { data: users = localUsers } = useApi('/api/users', localUsers);
+
+  const activeUser = (users || localUsers).find(u => u.id === userId) || (users || localUsers)[1] || localUsers[1];
+  const activeUserId = activeUser?.id || 'enkh';
+
   const [tab, setTab] = useState('dms');
-  const [messages, setMessages] = useState(chatMessages);
+  const [messages, setMessages] = useState(localChat);
   const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
   const msgsRef = useRef(null);
 
-  const activeUser = users.find(u => u.id === userId) || users[1]; // default Энхтуяа
+  // Backend-аас active user-ийн чат түүх татах
+  useEffect(() => {
+    let alive = true;
+    api.get(`/api/chat/${activeUserId}/messages`)
+      .then(res => { if (alive) setMessages(unwrap(res)); })
+      .catch(() => { if (alive) setMessages(localChat); /* backend off → fallback */ });
+    return () => { alive = false; };
+  }, [activeUserId]);
 
   useEffect(() => {
     if (msgsRef.current) msgsRef.current.scrollTop = msgsRef.current.scrollHeight;
   }, [messages]);
 
-  const send = () => {
+  const send = async () => {
     const t = input.trim();
     if (!t) return;
+    setSending(true);
     const now = new Date();
     const ts = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
-    setMessages([...messages, { sender:'Би', av:'😊', time:ts, text:t, me:true }]);
+    const optimistic = { sender:'Би', av:'😊', time:ts, text:t, me:true };
+    setMessages(prev => [...prev, optimistic]);
     setInput('');
+
+    try {
+      await api.post(`/api/chat/${activeUserId}/messages`, { text: t });
+    } catch (err) {
+      console.warn('Backend POST алдаа (UI-д үлдсэн):', err.message);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (

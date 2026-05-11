@@ -1,7 +1,17 @@
-import { kpis, reports, dauChart } from '../data/member3.js';
-import { users } from '../data/member1.js';
+import {
+  kpis     as localKpis,
+  reports  as localReports,
+  dauChart as localDau
+} from '../data/member3.js';
+import { users as localUsers } from '../data/member1.js';
+import { useApi } from '../hooks/useApi.js';
 
 export default function Admin() {
+  const { data: kpis     = localKpis }     = useApi('/api/admin/kpis',    localKpis);
+  const { data: dauChart = localDau }      = useApi('/api/admin/dau',     localDau);
+  const { data: users    = localUsers }    = useApi('/api/users',         localUsers);
+  const { data: reports  = localReports }  = useApi('/api/admin/reports', localReports);
+
   return (
     <div className="sc on">
       <div className="admin-pg">

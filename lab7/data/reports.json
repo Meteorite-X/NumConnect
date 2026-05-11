@@ -1,0 +1,5 @@
+[
+  { "id": "r1", "icon": "⚠️", "title": "Зохисгүй зураг", "detail": "user#87→#112 · 2ц",     "status": "open" },
+  { "id": "r2", "icon": "🔇", "title": "Spam",            "detail": "user#34→#56 · 5ц",      "status": "open" },
+  { "id": "r3", "icon": "✅", "title": "Буруу мэдээлэл",  "detail": "user#91→#23 · Өчигдөр", "status": "resolved" }
+]

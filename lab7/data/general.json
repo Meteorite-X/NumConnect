@@ -1,0 +1,10 @@
+[
+  { "name": "Номинчимэг", "av": "👩‍💻", "time": "14:02", "text": "Хэн нэгэн <strong>React hooks</strong> мэддэг үү?",                                      "clickable": true  },
+  { "name": "Мөнхбат",    "av": "🧑‍💻", "time": "14:05", "text": "<code>useEffect</code> — Cleanup function мартаж болохгүй 👍",                            "clickable": true  },
+  { "name": "Энхтуяа",    "av": "👩‍🎨", "time": "14:08", "text": "Маргааш <strong>Library-д</strong> хамт суух хүн бий юу? 📚",                             "clickable": true  },
+  { "name": "Батмөнх",    "av": "🧑‍🔬", "time": "14:10", "text": "@Энхтуяа Би байна! Python coursework хийх хэрэгтэй 😅",                                   "clickable": true  },
+  { "name": "Сарантуяа",  "av": "👩‍💼", "time": "14:15", "text": "NumConnect-р танилцсан найзуудтайгаа <strong>бүлгийн проект</strong> хийж байна 🎉",       "clickable": false },
+  { "name": "Тэмүүлэн",   "av": "🧑‍💼", "time": "14:22", "text": "<strong>Data Science / ML</strong> study group байгуулмаар байна — сонирхолтой хэн нэгэн?","clickable": false },
+  { "name": "Оюунцэцэг",  "av": "👩‍🏫", "time": "14:25", "text": "@Тэмүүлэн Би! Sklearn-тэй танилцаж байна 🤓",                                              "clickable": false },
+  { "name": "Номинчимэг", "av": "👩‍💻", "time": "14:31", "text": "@Мөнхбат Баярлалаа! AbortController-тэй хийлээ 🙌",                                        "clickable": true  }
+]

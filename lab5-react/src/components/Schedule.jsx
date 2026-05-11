@@ -1,12 +1,32 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { schedulePattern, scheduleHours, scheduleDays } from '../data/member3.js';
+import {
+  schedulePattern as localPattern,
+  scheduleHours   as localHours,
+  scheduleDays    as localDays
+} from '../data/member3.js';
+import { useApi } from '../hooks/useApi.js';
 
 export default function Schedule() {
   const navigate = useNavigate();
+  // Backend-аас template татаж байна: { days, hours, template }
+  const { data: schedConf } = useApi('/api/schedule/template', {
+    days: localDays, hours: localHours, template: localPattern
+  });
+  const scheduleDays    = schedConf?.days     || localDays;
+  const scheduleHours   = schedConf?.hours    || localHours;
+  const schedulePattern = schedConf?.template || localPattern;
+
   const [mode, setMode] = useState('free');
   const [grid, setGrid] = useState(() => schedulePattern.map(row => [...row]));
   const [dragging, setDragging] = useState(false);
+
+  // Backend-аас pattern ирэхэд grid-г шинэчилнэ
+  useEffect(() => {
+    if (schedulePattern && schedulePattern.length) {
+      setGrid(schedulePattern.map(row => [...row]));
+    }
+  }, [schedConf]);
 
   const apply = (i, j) => {
     setGrid(prev => {

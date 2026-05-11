@@ -1,14 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { users, filters, recentMatches } from '../data/member1.js';
+import {
+  users         as localUsers,
+  filters       as localFilters,
+  recentMatches as localRecentMatches
+} from '../data/member1.js';
+import { useApi } from '../hooks/useApi.js';
 
 export default function Discover() {
   const navigate = useNavigate();
+  const { data: users         = localUsers }         = useApi('/api/users',          localUsers);
+  const { data: filters       = localFilters }       = useApi('/api/filters',        localFilters);
+  const { data: recentMatches = localRecentMatches } = useApi('/api/matches/recent', localRecentMatches);
+
   const [view, setView] = useState('swipe');
   const [activeFilter, setActiveFilter] = useState('Бүгд');
   const [showMatch, setShowMatch] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
-  const topUser = users[cardIndex] || users[0];
+  const topUser = (users || localUsers)[cardIndex] || (users || localUsers)[0] || localUsers[0];
 
   const nextCard = () => setCardIndex(i => (i + 1) % users.length);
   const handleLike = () => { setShowMatch(true); };

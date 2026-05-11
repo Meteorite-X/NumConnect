@@ -1,0 +1,48 @@
+[
+  {
+    "id": "free",
+    "name": "Үнэгүй",
+    "price": 0,
+    "currency": "MNT",
+    "period": "үүрд",
+    "features": [
+      { "yes": true,  "text": "Долоо хоногт 10 холболт" },
+      { "yes": true,  "text": "1:1 чат" },
+      { "yes": true,  "text": "Хуваарь тохируулах" },
+      { "yes": true,  "text": "# general суваг" },
+      { "yes": false, "text": "Бүлгийн чат" },
+      { "yes": false, "text": "Хэн үзсэнийг харах" }
+    ]
+  },
+  {
+    "id": "pro",
+    "name": "Pro",
+    "price": 4900,
+    "currency": "MNT",
+    "period": "сар",
+    "popular": true,
+    "features": [
+      { "yes": true, "text": "Хязгааргүй холболт" },
+      { "yes": true, "text": "Бүлгийн чат (5 хүртэл бүлэг)" },
+      { "yes": true, "text": "Хэн профайл үзсэнийг харах" },
+      { "yes": true, "text": "Мессеж уншсан эсэх (✓✓)" },
+      { "yes": true, "text": "Discover-д эхэнд харагдах" },
+      { "yes": false, "text": "Эвент үүсгэх" }
+    ]
+  },
+  {
+    "id": "pro-plus",
+    "name": "Pro+",
+    "price": 8900,
+    "currency": "MNT",
+    "period": "сар",
+    "features": [
+      { "yes": true, "text": "Pro-ийн бүх боломж" },
+      { "yes": true, "text": "Хязгааргүй бүлгийн чат" },
+      { "yes": true, "text": "Уулзалт/эвент зохион байгуулах" },
+      { "yes": true, "text": "Хуваарийн дэлгэрэнгүй шинжилгээ" },
+      { "yes": true, "text": "Нэмэлт профайл тохиргоо" },
+      { "yes": true, "text": "Pro+ badge ✦" }
+    ]
+  }
+]
